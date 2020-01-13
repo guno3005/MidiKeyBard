@@ -15,6 +15,7 @@ namespace MidiKeyBard
         private List<Byte> _chordNotes;
         private bool _enable = false;
         public static Arpeggiator Instance = _instance;
+        private byte _lastOnNote;
 
         private Arpeggiator()
         {
@@ -41,44 +42,69 @@ namespace MidiKeyBard
             else
             {
                 _enable = true;
-                Task.Run(() => { MainLoop(); });
+                Task.Run(() => { ReceivingLoop(); });
             }
         }
         public void Stop()
         {
             _enable = false;
         }
-        public void MainLoop()
-        { 
+        public void ReceivingLoop()
+        {
             while(_enable)
             {
-                foreach (var note in _chordNotes)
+                if (_chordNotes.Count == 0)
                 {
-                    Channel.Instance.Put(new NoteEvent(note, true));
-                    System.Threading.Thread.Sleep((int)(Setting.ArpeggiatorDelay));
-                    Channel.Instance.Put(new NoteEvent(note, false));
+                    if (_lastOnNote <= Midi.NoteNumberMax)
+                    {
+                        Channel.Instance.Put(new NoteEvent(_lastOnNote, false));
+                    }
+                    _lastOnNote = Byte.MaxValue;
+                }
+                else
+                {
+                    PutArpeggioNotes(_chordNotes);
                 }
 
-                UpdateChordNotes();
+                UpdateChordNotes(ref _chordNotes);
 
                 System.Threading.Thread.Sleep(1);
             }
         }
+        private void PutArpeggioNotes(List<Byte> chordNotes)
+        {
+            foreach (var note in chordNotes)
+            {
+                if (note != _lastOnNote)
+                {
+                    if (_lastOnNote <= Midi.NoteNumberMax)
+                    {
+                        Channel.Instance.Put(new NoteEvent(_lastOnNote, false));
+                    }
+                    Channel.Instance.Put(new NoteEvent(note, true));
+                    _lastOnNote = note;
+                    if (chordNotes.Count != 0)
+                    {
+                        System.Threading.Thread.Sleep((int)(Setting.ArpeggiatorDelay));
+                    }
+                }
+            }
+        }
 
-        private void UpdateChordNotes()
+        private void UpdateChordNotes(ref List<Byte> chordNotes)
         {
             while (_onQueue.Count > 0)
             {
                 byte note;
                 if (_onQueue.TryDequeue(out note))
                 {
-                    if (_chordNotes.Contains(note))
+                    if (chordNotes.Contains(note))
                     {
                         ; //do nothing
                     }
                     else
                     {
-                        _chordNotes.Add(note);
+                        chordNotes.Add(note);
                     }
                 }
                 else
@@ -93,9 +119,9 @@ namespace MidiKeyBard
                 byte note;
                 if (_offQueue.TryDequeue(out note))
                 {
-                    if (_chordNotes.Contains(note))
+                    if (chordNotes.Contains(note))
                     {
-                        _chordNotes.Remove(note);
+                        chordNotes.Remove(note);
                     }
                     else
                     {

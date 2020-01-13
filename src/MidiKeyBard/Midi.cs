@@ -11,6 +11,7 @@ namespace MidiKeyBard
     public class Midi
     {
         const int VelocityMax = 127;
+        public const int NoteNumberMax = 127;
 
         CMIDIIn _inPort;
         System.Timers.Timer _recvTimer;
