@@ -18,6 +18,48 @@ namespace MidiKeyBard
         public OptionForm()
         {
             InitializeComponent();
+            InitializeComboMidiInItems();
+        }
+        private void InitializeComboMidiInItems()
+        {
+            const string ColValue = "Value";
+            const string ColText = "Text";
+
+            var midiInItems = new DataTable();
+            midiInItems.Columns.Add(ColText, typeof(string));
+            midiInItems.Columns.Add(ColValue, typeof(int));
+            var items = new Dictionary<string, int>()
+            {
+                { "ALL",  -1 },
+                { "1",  0 },
+                { "2",  1 },
+                { "3",  2 },
+                { "4",  3 },
+                { "5",  4 },
+                { "6",  5 },
+                { "7",  6 },
+                { "8",  7 },
+                { "9",  8 },
+                { "10",  9 },
+                { "11",  10 },
+                { "12",  11 },
+                { "13",  12 },
+                { "14",  13 },
+                { "15",  14 },
+                { "16",  15 },
+            };
+            foreach (var i in items)
+            {
+                var row = midiInItems.NewRow();
+                row[ColText] = i.Key;
+                row[ColValue] = i.Value;
+
+                midiInItems.Rows.Add(row);
+            }
+            midiInItems.AcceptChanges();
+            comboMidiInCh.DataSource = midiInItems;
+            comboMidiInCh.DisplayMember = ColText;
+            comboMidiInCh.ValueMember = ColValue;
         }
 
         private void OptionForm_Load(object sender, EventArgs e)
@@ -26,7 +68,8 @@ namespace MidiKeyBard
             nudNoteDelay.Value = Setting.NoteDelay;
             nudNoteOffVelocity.Value = Setting.NoteOffThreshold;
             chbArpeggiatorEnable.Checked = Setting.EnableArpeggiator;
-            nudArpegDelay.Value = Setting.ArpeggiatorDelay; 
+            nudArpegDelay.Value = Setting.ArpeggiatorDelay;
+            comboMidiInCh.SelectedValue = Setting.MidiInCh;
 
             KeySettingMap = KeySetting.GetKeyMap();
         }
@@ -42,6 +85,7 @@ namespace MidiKeyBard
             Setting.NoteOffThreshold = (int)nudNoteOffVelocity.Value;
             Setting.EnableArpeggiator = chbArpeggiatorEnable.Checked;
             Setting.ArpeggiatorDelay = Math.Max((int)nudArpegDelay.Value, Setting.NoteDelay);
+            Setting.MidiInCh = (int)comboMidiInCh.SelectedValue;
             Setting.SaveFile();
 
             KeySetting.SetKeyMap(KeySettingMap);

@@ -91,13 +91,18 @@ namespace MidiKeyBard
         {
             try
             {
-                var type = ByteToMidiEventType(message[0]);
-
                 if (message.Length < 2)
                 {
                     return;
                 }
 
+                var ch = ByteToMidiCh(message[0]);
+                if ((Setting.MidiInCh != -1) && (Setting.MidiInCh != ch))
+                {
+                    return;
+                }
+
+                var type = ByteToMidiEventType(message[0]);
                 switch (type)
                 {
                     case MidiEventType.NOTE_ON:
@@ -184,9 +189,11 @@ namespace MidiKeyBard
             OTHER = 0x00
         }
 
-        private static MidiEventType ByteToMidiEventType(byte type)
+        private static MidiEventType ByteToMidiEventType(byte message)
         {
-           switch (type)
+
+            byte type = (byte)(0xF0 & message);
+            switch (type)
             {
                 case (byte)MidiEventType.NOTE_ON:
                     return MidiEventType.NOTE_ON;
@@ -198,5 +205,9 @@ namespace MidiKeyBard
  
         }
 
+        private static int ByteToMidiCh(byte message)
+        {
+            return (0x0F & message);
+        }
     }
 }
