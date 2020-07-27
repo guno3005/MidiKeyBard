@@ -16,6 +16,7 @@ namespace MidiKeyBard
         public static int MidiInCount = 0;
         public static bool EnableArpeggiator = false;
         public static int ArpeggiatorDelay = 50;
+        public static int MidiInCh = 0;
 
         internal static void SaveFile()
         {
@@ -28,6 +29,7 @@ namespace MidiKeyBard
                 ini.setValue(AppSetting.Section, AppSetting.ValueMidiInCount, MidiInCount);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorDelay, ArpeggiatorDelay);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatoEnable, EnableArpeggiator);
+                ini.setValue(AppSetting.Section, AppSetting.MidiInCh, MidiInCh);
             }
             catch (Exception)
             {
@@ -66,7 +68,8 @@ namespace MidiKeyBard
                 SelectedMidiInIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex);
                 MidiInCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiInCount);
                 EnableArpeggiator = ini.getValueBool(AppSetting.Section, AppSetting.ArpeggiatoEnable);
-                ArpeggiatorDelay = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorDelay,50);
+                ArpeggiatorDelay = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorDelay, 50);
+                MidiInCh = ini.getValueInt(AppSetting.Section, AppSetting.MidiInCh, 0);
             }
             catch (Exception)
             {
@@ -84,6 +87,7 @@ namespace MidiKeyBard
             public const String ValueMidiInCount = "MidiInCount";
             public const String ArpeggiatorDelay = "ArpeggiatorDelay";
             public const String ArpeggiatoEnable = "ArpeggiatoEnable";
+            public const String MidiInCh = "MidiInCh";
         }
     }
 

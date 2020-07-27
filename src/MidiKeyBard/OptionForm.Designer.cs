@@ -44,11 +44,15 @@
             this.chbArpeggiatorEnable = new System.Windows.Forms.CheckBox();
             this.nudArpegDelay = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
+            this.gboxMidiDevice = new System.Windows.Forms.GroupBox();
+            this.lblMidiInCh = new System.Windows.Forms.Label();
+            this.comboMidiInCh = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteOffVelocity)).BeginInit();
             this.gboxKeyConfig.SuspendLayout();
             this.gboxArpeggiator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudArpegDelay)).BeginInit();
+            this.gboxMidiDevice.SuspendLayout();
             this.SuspendLayout();
             // 
             // nudNoteDelay
@@ -95,7 +99,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(116, 286);
+            this.btnOK.Location = new System.Drawing.Point(116, 337);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 4;
@@ -105,7 +109,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(197, 286);
+            this.btnCancel.Location = new System.Drawing.Point(197, 337);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 4;
@@ -168,7 +172,7 @@
             this.gboxKeyConfig.Controls.Add(this.label4);
             this.gboxKeyConfig.Controls.Add(this.btnPresetA);
             this.gboxKeyConfig.Controls.Add(this.btnImport);
-            this.gboxKeyConfig.Location = new System.Drawing.Point(12, 179);
+            this.gboxKeyConfig.Location = new System.Drawing.Point(12, 164);
             this.gboxKeyConfig.Name = "gboxKeyConfig";
             this.gboxKeyConfig.Size = new System.Drawing.Size(260, 85);
             this.gboxKeyConfig.TabIndex = 6;
@@ -223,11 +227,40 @@
             this.label5.TabIndex = 2;
             this.label5.Text = "Interval [0-1000 ms]";
             // 
+            // gboxMidiDevice
+            // 
+            this.gboxMidiDevice.Controls.Add(this.lblMidiInCh);
+            this.gboxMidiDevice.Controls.Add(this.comboMidiInCh);
+            this.gboxMidiDevice.Location = new System.Drawing.Point(14, 255);
+            this.gboxMidiDevice.Name = "gboxMidiDevice";
+            this.gboxMidiDevice.Size = new System.Drawing.Size(257, 49);
+            this.gboxMidiDevice.TabIndex = 7;
+            this.gboxMidiDevice.TabStop = false;
+            this.gboxMidiDevice.Text = "MIDI Device";
+            // 
+            // lblMidiInCh
+            // 
+            this.lblMidiInCh.AutoSize = true;
+            this.lblMidiInCh.Location = new System.Drawing.Point(11, 21);
+            this.lblMidiInCh.Name = "lblMidiInCh";
+            this.lblMidiInCh.Size = new System.Drawing.Size(88, 12);
+            this.lblMidiInCh.TabIndex = 4;
+            this.lblMidiInCh.Text = "MIDI IN Channel";
+            // 
+            // comboMidiInCh
+            // 
+            this.comboMidiInCh.FormattingEnabled = true;
+            this.comboMidiInCh.Location = new System.Drawing.Point(164, 18);
+            this.comboMidiInCh.Name = "comboMidiInCh";
+            this.comboMidiInCh.Size = new System.Drawing.Size(87, 20);
+            this.comboMidiInCh.TabIndex = 0;
+            // 
             // OptionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 322);
+            this.ClientSize = new System.Drawing.Size(284, 372);
+            this.Controls.Add(this.gboxMidiDevice);
             this.Controls.Add(this.gboxArpeggiator);
             this.Controls.Add(this.gboxKeyConfig);
             this.Controls.Add(this.btnCancel);
@@ -251,6 +284,8 @@
             this.gboxArpeggiator.ResumeLayout(false);
             this.gboxArpeggiator.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudArpegDelay)).EndInit();
+            this.gboxMidiDevice.ResumeLayout(false);
+            this.gboxMidiDevice.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -274,5 +309,8 @@
         private System.Windows.Forms.CheckBox chbArpeggiatorEnable;
         private System.Windows.Forms.NumericUpDown nudArpegDelay;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.GroupBox gboxMidiDevice;
+        private System.Windows.Forms.Label lblMidiInCh;
+        private System.Windows.Forms.ComboBox comboMidiInCh;
     }
 }
