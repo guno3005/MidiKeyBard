@@ -33,7 +33,7 @@ MIDIIOLibCSharpの著作権は"(C)2012  友水"様が保有しています。
 BSDライセンスで配布されています。
 
 ### 本ソフトウェアはFFXIV ファンキット（アイコン画像）を使用します。
-Copyright (C) 2010 - 2019 SQUARE ENIX CO., LTD. All Rights Reserved.
+Copyright (C) SQUARE ENIX CO., LTD. All Rights Reserved.
  https://jp.finalfantasyxiv.com/lodestone/special/fankit/
 
 --------------------------
