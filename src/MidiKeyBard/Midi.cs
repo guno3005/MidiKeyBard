@@ -18,7 +18,7 @@ namespace MidiKeyBard
 
         public Midi()
         {
-            CMIDIIOLib.SetLanguage(CMIDIIOLib.Japanese);
+            CMIDIIOLib.SetLanguage(CMIDIIOLib.English);
             CMIDIIOLib.SetIsShowDetail(true);
             _recvTimer = new System.Timers.Timer();
             _recvTimer.Elapsed += _recvTimer_Elapsed;

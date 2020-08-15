@@ -100,7 +100,18 @@ namespace MidiKeyBard
             }
 
             //_midi = new Midi();
-            _midi.OpenPort(item);
+            labelStatus.Text = String.Empty;
+            try
+            {
+                _midi.OpenPort(item);
+            }
+            catch (Exception ex)
+            {
+                //MIDIIOが複数行のex.Messageを返すので1行目のみ表示
+                //例:"Could not Open nanoKEY2 (MIDI Input Device).\nMIDIIO_cpp.cpp(241) CMIDIIn::Reopen"
+                var exLines = ex.Message.Split(new[] { '\n' });
+                labelStatus.Text = "Error! : " + exLines[0];
+            }
             Setting.SelectedMidiInIndex = comboBox1.SelectedIndex;
         }
 
