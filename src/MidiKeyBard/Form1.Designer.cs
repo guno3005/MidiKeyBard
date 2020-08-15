@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.btnOption = new System.Windows.Forms.Button();
+            this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -53,11 +54,21 @@
             this.btnOption.UseVisualStyleBackColor = true;
             this.btnOption.Click += new System.EventHandler(this.btnOption_Click);
             // 
+            // labelStatus
+            // 
+            this.labelStatus.Font = new System.Drawing.Font("MS UI Gothic", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.labelStatus.Location = new System.Drawing.Point(28, 74);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(322, 43);
+            this.labelStatus.TabIndex = 2;
+            this.labelStatus.Text = "Error : No MIDI IN device.";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(353, 126);
+            this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.btnOption);
             this.Controls.Add(this.comboBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -75,6 +86,7 @@
 
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button btnOption;
+        private System.Windows.Forms.Label labelStatus;
     }
 }
 
