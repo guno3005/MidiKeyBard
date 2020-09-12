@@ -39,13 +39,16 @@
             // 
             // comboBoxMidiIn
             // 
+            this.comboBoxMidiIn.BackColor = System.Drawing.SystemColors.Window;
             this.comboBoxMidiIn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxMidiIn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBoxMidiIn.FormattingEnabled = true;
             this.comboBoxMidiIn.Location = new System.Drawing.Point(40, 37);
             this.comboBoxMidiIn.Name = "comboBoxMidiIn";
             this.comboBoxMidiIn.Size = new System.Drawing.Size(220, 20);
             this.comboBoxMidiIn.TabIndex = 0;
             this.comboBoxMidiIn.SelectedIndexChanged += new System.EventHandler(this.comboBoxMidiIn_SelectedIndexChanged);
+            this.comboBoxMidiIn.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.comboBoxMidiIn_KeyPress);
             // 
             // btnOption
             // 
@@ -68,13 +71,16 @@
             // 
             // comboBoxMidiOut
             // 
+            this.comboBoxMidiOut.BackColor = System.Drawing.SystemColors.Window;
             this.comboBoxMidiOut.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxMidiOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBoxMidiOut.FormattingEnabled = true;
             this.comboBoxMidiOut.Location = new System.Drawing.Point(40, 63);
             this.comboBoxMidiOut.Name = "comboBoxMidiOut";
             this.comboBoxMidiOut.Size = new System.Drawing.Size(220, 20);
             this.comboBoxMidiOut.TabIndex = 3;
             this.comboBoxMidiOut.SelectedIndexChanged += new System.EventHandler(this.comboBoxMidiOut_SelectedIndexChanged);
+            this.comboBoxMidiOut.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.comboBoxMidiOut_KeyPress);
             // 
             // labelMidiIn
             // 

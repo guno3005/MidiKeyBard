@@ -83,7 +83,6 @@ namespace MidiKeyBard
             }
         }
 
-
         private void mainLoop()
         {
             Task.Factory.StartNew(() =>
@@ -126,6 +125,7 @@ namespace MidiKeyBard
             var item = comboBoxMidiIn.SelectedItem.ToString();
             if (string.IsNullOrWhiteSpace(item))
             {
+                comboBoxMidiIn.BackColor = Color.Empty;
                 return;
             }
 
@@ -134,6 +134,7 @@ namespace MidiKeyBard
             try
             {
                 _midi.OpenPort(item);
+                comboBoxMidiIn.BackColor = Color.Empty;
             }
             catch (Exception ex)
             {
@@ -141,6 +142,7 @@ namespace MidiKeyBard
                 //例:"Could not Open nanoKEY2 (MIDI Input Device).\nMIDIIO_cpp.cpp(241) CMIDIIn::Reopen"
                 var exLines = ex.Message.Split(new[] { '\n' });
                 labelStatus.Text = "Error! : " + exLines[0];
+                comboBoxMidiIn.BackColor = Color.Red;
             }
             Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
         }
@@ -159,8 +161,9 @@ namespace MidiKeyBard
             comboBoxMidiIn.Items.AddRange(list.ToArray<string>());
 
             var outList = Midi.EnumOutput();
+            outList.Insert(0, String.Empty);    //MidiOutしない場合用の選択肢を追加
             comboBoxMidiOut.Items.Clear();
-            comboBoxMidiOut.Items.AddRange(list.ToArray<string>());
+            comboBoxMidiOut.Items.AddRange(outList.ToArray<string>());
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -201,28 +204,44 @@ namespace MidiKeyBard
 
         private void comboBoxMidiOut_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //CloseMidi();
+            labelStatus.Text = String.Empty;
+
             _midi.CloseOutPort();
             var item = comboBoxMidiOut.SelectedItem.ToString();
             if (string.IsNullOrWhiteSpace(item))
             {
+                comboBoxMidiOut.BackColor = Color.Empty;
                 return;
             }
 
-            //_midi = new Midi();
-            labelStatus.Text = String.Empty;
             try
             {
                 _midi.OpenOutPort(item);
+                comboBoxMidiOut.BackColor = Color.Empty;
             }
             catch (Exception ex)
             {
                 //MIDIIOが複数行のex.Messageを返すので1行目のみ表示
-                //例:"Could not Open nanoKEY2 (MIDI Input Device).\nMIDIIO_cpp.cpp(241) CMIDIIn::Reopen"
+                //例:"Could not Open nanoKEY2 (MIDI Output Device).\nMIDIIO_cpp.cpp(492) CMIDIOut::Reopen"
                 var exLines = ex.Message.Split(new[] { '\n' });
                 labelStatus.Text = "Error! : " + exLines[0];
+                comboBoxMidiOut.BackColor = Color.Red;
             }
             Setting.SelectedMidiOutIndex = comboBoxMidiOut.SelectedIndex;
+        }
+
+        private void comboBoxMidiIn_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //当アプリにフォーカスがある場合のMIDI入力で
+            //うっかりデバイスが変更されないように、ComboBoxへのキー入力を無効化
+            e.Handled = true;
+        }
+
+        private void comboBoxMidiOut_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //当アプリにフォーカスがある場合のMIDI入力で
+            //うっかりデバイスが変更されないように、ComboBoxへのキー入力を無効化
+            e.Handled = true;
         }
     }
 }

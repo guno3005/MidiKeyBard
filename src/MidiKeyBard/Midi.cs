@@ -169,7 +169,7 @@ namespace MidiKeyBard
             }
         }
 
-        internal static object EnumOutput()
+        public static List<string> EnumOutput()
         {
             int count = CMIDIOut.GetDeviceNum();
             var list = new List<string>();
