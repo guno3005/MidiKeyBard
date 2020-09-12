@@ -47,6 +47,7 @@
             this.gboxMidiDevice = new System.Windows.Forms.GroupBox();
             this.lblMidiInCh = new System.Windows.Forms.Label();
             this.comboMidiInCh = new System.Windows.Forms.ComboBox();
+            this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteOffVelocity)).BeginInit();
             this.gboxKeyConfig.SuspendLayout();
@@ -229,11 +230,12 @@
             // 
             // gboxMidiDevice
             // 
+            this.gboxMidiDevice.Controls.Add(this.checkBoxEnableMidiOut);
             this.gboxMidiDevice.Controls.Add(this.lblMidiInCh);
             this.gboxMidiDevice.Controls.Add(this.comboMidiInCh);
             this.gboxMidiDevice.Location = new System.Drawing.Point(14, 255);
             this.gboxMidiDevice.Name = "gboxMidiDevice";
-            this.gboxMidiDevice.Size = new System.Drawing.Size(257, 49);
+            this.gboxMidiDevice.Size = new System.Drawing.Size(257, 76);
             this.gboxMidiDevice.TabIndex = 7;
             this.gboxMidiDevice.TabStop = false;
             this.gboxMidiDevice.Text = "MIDI Device";
@@ -254,6 +256,16 @@
             this.comboMidiInCh.Name = "comboMidiInCh";
             this.comboMidiInCh.Size = new System.Drawing.Size(87, 20);
             this.comboMidiInCh.TabIndex = 0;
+            // 
+            // checkBoxEnableMidiOut
+            // 
+            this.checkBoxEnableMidiOut.AutoSize = true;
+            this.checkBoxEnableMidiOut.Location = new System.Drawing.Point(13, 46);
+            this.checkBoxEnableMidiOut.Name = "checkBoxEnableMidiOut";
+            this.checkBoxEnableMidiOut.Size = new System.Drawing.Size(112, 16);
+            this.checkBoxEnableMidiOut.TabIndex = 6;
+            this.checkBoxEnableMidiOut.Text = "Enable MIDI OUT";
+            this.checkBoxEnableMidiOut.UseVisualStyleBackColor = true;
             // 
             // OptionForm
             // 
@@ -312,5 +324,6 @@
         private System.Windows.Forms.GroupBox gboxMidiDevice;
         private System.Windows.Forms.Label lblMidiInCh;
         private System.Windows.Forms.ComboBox comboMidiInCh;
+        private System.Windows.Forms.CheckBox checkBoxEnableMidiOut;
     }
 }

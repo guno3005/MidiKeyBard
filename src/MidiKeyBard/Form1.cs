@@ -35,23 +35,52 @@ namespace MidiKeyBard
             Setting.LoadSettingFile();
 
             ResetComboBox();
-            if (comboBox1.Items.Count > 0)
+            if (comboBoxMidiIn.Items.Count > 0)
             {
-                if(comboBox1.Items.Count== Setting.MidiInCount)
+                if(comboBoxMidiIn.Items.Count== Setting.MidiInCount)
                 {
-                    comboBox1.SelectedIndex = Setting.SelectedMidiInIndex;
+                    comboBoxMidiIn.SelectedIndex = Setting.SelectedMidiInIndex;
                 }
                 else
                 {
-                    comboBox1.SelectedIndex = 0;
-                    Setting.SelectedMidiInIndex = comboBox1.SelectedIndex;
+                    comboBoxMidiIn.SelectedIndex = 0;
+                    Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
                 }
             }
-            Setting.MidiInCount = comboBox1.Items.Count;
+            Setting.MidiInCount = comboBoxMidiIn.Items.Count;
+
+            resetMidiOut();
+
 
             mainLoop();
             Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
 
+            UpdateDisplay();
+        }
+
+        private void resetMidiOut()
+        {
+            if (Setting.EnebleMidiOut)
+            {
+                if (comboBoxMidiOut.Items.Count > 0)
+                {
+                    if (comboBoxMidiOut.Items.Count == Setting.MidiOutCount)
+                    {
+                        comboBoxMidiOut.SelectedIndex = Setting.SelectedMidiOutIndex;
+                    }
+                    else
+                    {
+                        comboBoxMidiOut.SelectedIndex = 0;
+                        Setting.SelectedMidiOutIndex = comboBoxMidiOut.SelectedIndex;
+                    }
+                }
+                Setting.MidiOutCount = comboBoxMidiOut.Items.Count;
+            }
+            else
+            {
+                // disable MidiOut
+                _midi.CloseOutPort();
+            }
         }
 
         private void mainLoop()
@@ -89,13 +118,14 @@ namespace MidiKeyBard
             });
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBoxMidiIn_SelectedIndexChanged(object sender, EventArgs e)
         {
             //CloseMidi();
             _midi.ClosePort();
-            var item = comboBox1.SelectedItem.ToString();
+            var item = comboBoxMidiIn.SelectedItem.ToString();
             if (string.IsNullOrWhiteSpace(item))
             {
+                comboBoxMidiIn.BackColor = Color.Empty;
                 return;
             }
 
@@ -104,6 +134,7 @@ namespace MidiKeyBard
             try
             {
                 _midi.OpenPort(item);
+                comboBoxMidiIn.BackColor = Color.Empty;
             }
             catch (Exception ex)
             {
@@ -111,8 +142,9 @@ namespace MidiKeyBard
                 //例:"Could not Open nanoKEY2 (MIDI Input Device).\nMIDIIO_cpp.cpp(241) CMIDIIn::Reopen"
                 var exLines = ex.Message.Split(new[] { '\n' });
                 labelStatus.Text = "Error! : " + exLines[0];
+                comboBoxMidiIn.BackColor = Color.Red;
             }
-            Setting.SelectedMidiInIndex = comboBox1.SelectedIndex;
+            Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
         }
 
         // Midiデバイスの再取得ができないので断念…
@@ -125,9 +157,13 @@ namespace MidiKeyBard
         private void ResetComboBox()
         {
             var list = Midi.EnumInput();
-            comboBox1.Items.Clear();
-            comboBox1.Items.AddRange(list.ToArray<string>());
+            comboBoxMidiIn.Items.Clear();
+            comboBoxMidiIn.Items.AddRange(list.ToArray<string>());
 
+            var outList = Midi.EnumOutput();
+            outList.Insert(0, String.Empty);    //MidiOutしない場合用の選択肢を追加
+            comboBoxMidiOut.Items.Clear();
+            comboBoxMidiOut.Items.AddRange(outList.ToArray<string>());
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -144,6 +180,68 @@ namespace MidiKeyBard
         private void btnOption_Click(object sender, EventArgs e)
         {
             new OptionForm().ShowDialog();
+            resetMidiOut();
+            UpdateDisplay();
+        }
+
+        private void UpdateDisplay()
+        {
+            if (Setting.EnebleMidiOut)
+            {
+                labelMidiOut.Visible = true;
+                comboBoxMidiOut.Visible = true;
+                this.Size = new Size(369,170);
+                labelStatus.Location = new Point(8, 92);
+            }
+            else
+            {
+                labelMidiOut.Visible = false;
+                comboBoxMidiOut.Visible = false;
+                this.Size = new Size(369,145);
+                labelStatus.Location = new Point(8, 67);
+            }
+        }
+
+        private void comboBoxMidiOut_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            labelStatus.Text = String.Empty;
+
+            _midi.CloseOutPort();
+            var item = comboBoxMidiOut.SelectedItem.ToString();
+            if (string.IsNullOrWhiteSpace(item))
+            {
+                comboBoxMidiOut.BackColor = Color.Empty;
+                return;
+            }
+
+            try
+            {
+                _midi.OpenOutPort(item);
+                comboBoxMidiOut.BackColor = Color.Empty;
+            }
+            catch (Exception ex)
+            {
+                //MIDIIOが複数行のex.Messageを返すので1行目のみ表示
+                //例:"Could not Open nanoKEY2 (MIDI Output Device).\nMIDIIO_cpp.cpp(492) CMIDIOut::Reopen"
+                var exLines = ex.Message.Split(new[] { '\n' });
+                labelStatus.Text = "Error! : " + exLines[0];
+                comboBoxMidiOut.BackColor = Color.Red;
+            }
+            Setting.SelectedMidiOutIndex = comboBoxMidiOut.SelectedIndex;
+        }
+
+        private void comboBoxMidiIn_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //当アプリにフォーカスがある場合のMIDI入力で
+            //うっかりデバイスが変更されないように、ComboBoxへのキー入力を無効化
+            e.Handled = true;
+        }
+
+        private void comboBoxMidiOut_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //当アプリにフォーカスがある場合のMIDI入力で
+            //うっかりデバイスが変更されないように、ComboBoxへのキー入力を無効化
+            e.Handled = true;
         }
     }
 }
