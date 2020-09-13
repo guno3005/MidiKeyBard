@@ -50,7 +50,7 @@ namespace MidiKeyBard
             return list;
         }
 
-        public void OpenPort(string name)
+        public void OpenInPort(string name)
         {
             _recvTimer.Stop();
 
@@ -67,7 +67,7 @@ namespace MidiKeyBard
             }
             
         }
-        public void ClosePort()
+        public void CloseInPort()
         {
 
             if (_inPort == null)

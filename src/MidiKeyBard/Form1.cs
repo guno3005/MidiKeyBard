@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -26,6 +27,9 @@ namespace MidiKeyBard
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Text = Application.ProductName + "  " + Application.ProductVersion ;
+            saveFileDialog1.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
+            openFileDialog1.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
+
 
             if (KeySetting.LoadSettingFile() == false)
             {
@@ -35,21 +39,8 @@ namespace MidiKeyBard
             Setting.LoadSettingFile();
 
             ResetComboBox();
-            if (comboBoxMidiIn.Items.Count > 0)
-            {
-                if(comboBoxMidiIn.Items.Count== Setting.MidiInCount)
-                {
-                    comboBoxMidiIn.SelectedIndex = Setting.SelectedMidiInIndex;
-                }
-                else
-                {
-                    comboBoxMidiIn.SelectedIndex = 0;
-                    Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
-                }
-            }
-            Setting.MidiInCount = comboBoxMidiIn.Items.Count;
-
-            resetMidiOut();
+            ResetMidiOut();
+            ResetMidiIn();
 
 
             mainLoop();
@@ -58,7 +49,28 @@ namespace MidiKeyBard
             UpdateDisplay();
         }
 
-        private void resetMidiOut()
+        private void ResetMidiIn()
+        {
+            if (comboBoxMidiIn.Items.Count == Setting.MidiInCount)
+            {
+                comboBoxMidiIn.SelectedIndex = Setting.SelectedMidiInIndex;
+            }
+            else
+            {
+                if(comboBoxMidiIn.Items.Count > 1)
+                {
+                    comboBoxMidiIn.SelectedIndex = 1;
+                }
+                else
+                {
+                    comboBoxMidiIn.SelectedIndex = 0;
+                }
+                Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
+            }
+            Setting.MidiInCount = comboBoxMidiIn.Items.Count;
+        }
+
+        private void ResetMidiOut()
         {
             if (Setting.EnebleMidiOut)
             {
@@ -120,8 +132,12 @@ namespace MidiKeyBard
 
         private void comboBoxMidiIn_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //CloseMidi();
-            _midi.ClosePort();
+            ReopenSelectedMidiIn();
+        }
+
+        private void ReopenSelectedMidiIn()
+        {
+            _midi.CloseInPort();
             var item = comboBoxMidiIn.SelectedItem.ToString();
             if (string.IsNullOrWhiteSpace(item))
             {
@@ -129,11 +145,10 @@ namespace MidiKeyBard
                 return;
             }
 
-            //_midi = new Midi();
             labelStatus.Text = String.Empty;
             try
             {
-                _midi.OpenPort(item);
+                _midi.OpenInPort(item);
                 comboBoxMidiIn.BackColor = Color.Empty;
             }
             catch (Exception ex)
@@ -145,20 +160,22 @@ namespace MidiKeyBard
                 comboBoxMidiIn.BackColor = Color.Red;
             }
             Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
+
         }
 
         // Midiデバイスの再取得ができないので断念…
         private void btnReLoad_Click(object sender, EventArgs e)
         {
-            _midi.ClosePort();
+            _midi.CloseInPort();
             ResetComboBox();
         }
 
         private void ResetComboBox()
         {
-            var list = Midi.EnumInput();
+            var inList = Midi.EnumInput();
+            inList.Insert(0, String.Empty);    //MidiInしない場合用の選択肢を追加
             comboBoxMidiIn.Items.Clear();
-            comboBoxMidiIn.Items.AddRange(list.ToArray<string>());
+            comboBoxMidiIn.Items.AddRange(inList.ToArray<string>());
 
             var outList = Midi.EnumOutput();
             outList.Insert(0, String.Empty);    //MidiOutしない場合用の選択肢を追加
@@ -171,17 +188,27 @@ namespace MidiKeyBard
             //CloseMidis();
             if (_midi != null)
             {
-                _midi.ClosePort();
+                _midi.CloseInPort();
+                _midi.CloseOutPort();
             }
 
             Setting.SaveState();
         }
 
-        private void btnOption_Click(object sender, EventArgs e)
+        private void ShowOptionForm()
         {
+            if (_midi != null)
+            {
+                _midi.CloseInPort();
+                _midi.CloseOutPort();
+            }
             new OptionForm().ShowDialog();
-            resetMidiOut();
+            ResetMidiIn();
+            ReopenSelectedMidiIn();
+            ResetMidiOut();
+            ReopenSelectedMidiOut();
             UpdateDisplay();
+
         }
 
         private void UpdateDisplay()
@@ -204,7 +231,16 @@ namespace MidiKeyBard
 
         private void comboBoxMidiOut_SelectedIndexChanged(object sender, EventArgs e)
         {
-            labelStatus.Text = String.Empty;
+            ReopenSelectedMidiOut();
+        }
+
+        private void ReopenSelectedMidiOut()
+        {
+            if (Setting.EnebleMidiOut == false)
+            {
+                _midi.CloseOutPort();
+                return;
+            }
 
             _midi.CloseOutPort();
             var item = comboBoxMidiOut.SelectedItem.ToString();
@@ -242,6 +278,74 @@ namespace MidiKeyBard
             //当アプリにフォーカスがある場合のMIDI入力で
             //うっかりデバイスが変更されないように、ComboBoxへのキー入力を無効化
             e.Handled = true;
+        }
+
+        private void optionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowOptionForm();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ret = saveFileDialog1.ShowDialog();
+            if (ret != DialogResult.OK)
+            {
+                return;
+            }
+            var dstFile = saveFileDialog1.FileName;
+
+            try
+            {
+                Setting.SaveState();
+                File.Copy(Setting.IniFilePath, dstFile, true);
+            }
+            catch (Exception ex)
+            {
+                labelStatus.Text = "Error! : Failed to save file.\n" + ex.Message;
+                return;
+            }
+
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ret = openFileDialog1.ShowDialog();
+            if(ret != DialogResult.OK)
+            {
+                return;
+            }
+            var iniFile = openFileDialog1.FileName;
+
+            try
+            {
+                File.Copy(iniFile, Setting.IniFilePath,true);
+            }
+            catch(Exception ex)
+            {
+                labelStatus.Text = "Error! : Failed to load file.\n" + ex.Message;
+                return;
+            }
+
+            if (KeySetting.LoadSettingFile() == false)
+            {
+                var map = KeySetting.GetPresetA();
+                KeySetting.SetKeyMap(map);
+            }
+            Setting.LoadSettingFile();
+            if (_midi != null)
+            {
+                _midi.CloseInPort();
+                _midi.CloseOutPort();
+            }
+            ResetComboBox();
+            ResetMidiIn();
+            ReopenSelectedMidiIn();
+            ResetMidiOut();
+            ReopenSelectedMidiOut();
+
+            Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
+
+            UpdateDisplay();
         }
     }
 }

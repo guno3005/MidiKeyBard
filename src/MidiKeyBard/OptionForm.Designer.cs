@@ -44,21 +44,25 @@
             this.chbArpeggiatorEnable = new System.Windows.Forms.CheckBox();
             this.nudArpegDelay = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.gboxMidiDevice = new System.Windows.Forms.GroupBox();
+            this.gboxMidiIn = new System.Windows.Forms.GroupBox();
+            this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
             this.lblMidiInCh = new System.Windows.Forms.Label();
             this.comboMidiInCh = new System.Windows.Forms.ComboBox();
-            this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
+            this.groupBoxMidiOut = new System.Windows.Forms.GroupBox();
+            this.groupBoxNoteControl = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteOffVelocity)).BeginInit();
             this.gboxKeyConfig.SuspendLayout();
             this.gboxArpeggiator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudArpegDelay)).BeginInit();
-            this.gboxMidiDevice.SuspendLayout();
+            this.gboxMidiIn.SuspendLayout();
+            this.groupBoxMidiOut.SuspendLayout();
+            this.groupBoxNoteControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // nudNoteDelay
             // 
-            this.nudNoteDelay.Location = new System.Drawing.Point(178, 22);
+            this.nudNoteDelay.Location = new System.Drawing.Point(166, 20);
             this.nudNoteDelay.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -70,7 +74,7 @@
             // 
             // nudNoteOffVelocity
             // 
-            this.nudNoteOffVelocity.Location = new System.Drawing.Point(178, 56);
+            this.nudNoteOffVelocity.Location = new System.Drawing.Point(166, 54);
             this.nudNoteOffVelocity.Maximum = new decimal(new int[] {
             127,
             0,
@@ -83,7 +87,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 24);
+            this.label1.Location = new System.Drawing.Point(6, 22);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(129, 12);
             this.label1.TabIndex = 2;
@@ -92,7 +96,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 58);
+            this.label2.Location = new System.Drawing.Point(6, 56);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(137, 12);
             this.label2.TabIndex = 3;
@@ -100,7 +104,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(116, 337);
+            this.btnOK.Location = new System.Drawing.Point(376, 248);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 4;
@@ -110,7 +114,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(197, 337);
+            this.btnCancel.Location = new System.Drawing.Point(457, 248);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 4;
@@ -173,9 +177,9 @@
             this.gboxKeyConfig.Controls.Add(this.label4);
             this.gboxKeyConfig.Controls.Add(this.btnPresetA);
             this.gboxKeyConfig.Controls.Add(this.btnImport);
-            this.gboxKeyConfig.Location = new System.Drawing.Point(12, 164);
+            this.gboxKeyConfig.Location = new System.Drawing.Point(6, 139);
             this.gboxKeyConfig.Name = "gboxKeyConfig";
-            this.gboxKeyConfig.Size = new System.Drawing.Size(260, 85);
+            this.gboxKeyConfig.Size = new System.Drawing.Size(260, 90);
             this.gboxKeyConfig.TabIndex = 6;
             this.gboxKeyConfig.TabStop = false;
             this.gboxKeyConfig.Text = "Key Config";
@@ -185,9 +189,9 @@
             this.gboxArpeggiator.Controls.Add(this.chbArpeggiatorEnable);
             this.gboxArpeggiator.Controls.Add(this.nudArpegDelay);
             this.gboxArpeggiator.Controls.Add(this.label5);
-            this.gboxArpeggiator.Location = new System.Drawing.Point(12, 81);
+            this.gboxArpeggiator.Location = new System.Drawing.Point(278, 154);
             this.gboxArpeggiator.Name = "gboxArpeggiator";
-            this.gboxArpeggiator.Size = new System.Drawing.Size(260, 77);
+            this.gboxArpeggiator.Size = new System.Drawing.Size(260, 75);
             this.gboxArpeggiator.TabIndex = 6;
             this.gboxArpeggiator.TabStop = false;
             this.gboxArpeggiator.Text = "Arpeggiator";
@@ -197,9 +201,9 @@
             this.chbArpeggiatorEnable.AutoSize = true;
             this.chbArpeggiatorEnable.Location = new System.Drawing.Point(15, 24);
             this.chbArpeggiatorEnable.Name = "chbArpeggiatorEnable";
-            this.chbArpeggiatorEnable.Size = new System.Drawing.Size(58, 16);
+            this.chbArpeggiatorEnable.Size = new System.Drawing.Size(121, 16);
             this.chbArpeggiatorEnable.TabIndex = 5;
-            this.chbArpeggiatorEnable.Text = "Enable";
+            this.chbArpeggiatorEnable.Text = "Enable Arpeggiator";
             this.chbArpeggiatorEnable.UseVisualStyleBackColor = true;
             // 
             // nudArpegDelay
@@ -228,22 +232,31 @@
             this.label5.TabIndex = 2;
             this.label5.Text = "Interval [0-1000 ms]";
             // 
-            // gboxMidiDevice
+            // gboxMidiIn
             // 
-            this.gboxMidiDevice.Controls.Add(this.checkBoxEnableMidiOut);
-            this.gboxMidiDevice.Controls.Add(this.lblMidiInCh);
-            this.gboxMidiDevice.Controls.Add(this.comboMidiInCh);
-            this.gboxMidiDevice.Location = new System.Drawing.Point(14, 255);
-            this.gboxMidiDevice.Name = "gboxMidiDevice";
-            this.gboxMidiDevice.Size = new System.Drawing.Size(257, 76);
-            this.gboxMidiDevice.TabIndex = 7;
-            this.gboxMidiDevice.TabStop = false;
-            this.gboxMidiDevice.Text = "MIDI Device";
+            this.gboxMidiIn.Controls.Add(this.lblMidiInCh);
+            this.gboxMidiIn.Controls.Add(this.comboMidiInCh);
+            this.gboxMidiIn.Location = new System.Drawing.Point(278, 22);
+            this.gboxMidiIn.Name = "gboxMidiIn";
+            this.gboxMidiIn.Size = new System.Drawing.Size(260, 60);
+            this.gboxMidiIn.TabIndex = 7;
+            this.gboxMidiIn.TabStop = false;
+            this.gboxMidiIn.Text = "MIDI In";
+            // 
+            // checkBoxEnableMidiOut
+            // 
+            this.checkBoxEnableMidiOut.AutoSize = true;
+            this.checkBoxEnableMidiOut.Location = new System.Drawing.Point(15, 24);
+            this.checkBoxEnableMidiOut.Name = "checkBoxEnableMidiOut";
+            this.checkBoxEnableMidiOut.Size = new System.Drawing.Size(112, 16);
+            this.checkBoxEnableMidiOut.TabIndex = 6;
+            this.checkBoxEnableMidiOut.Text = "Enable MIDI OUT";
+            this.checkBoxEnableMidiOut.UseVisualStyleBackColor = true;
             // 
             // lblMidiInCh
             // 
             this.lblMidiInCh.AutoSize = true;
-            this.lblMidiInCh.Location = new System.Drawing.Point(11, 21);
+            this.lblMidiInCh.Location = new System.Drawing.Point(15, 24);
             this.lblMidiInCh.Name = "lblMidiInCh";
             this.lblMidiInCh.Size = new System.Drawing.Size(88, 12);
             this.lblMidiInCh.TabIndex = 4;
@@ -252,35 +265,46 @@
             // comboMidiInCh
             // 
             this.comboMidiInCh.FormattingEnabled = true;
-            this.comboMidiInCh.Location = new System.Drawing.Point(164, 18);
+            this.comboMidiInCh.Location = new System.Drawing.Point(166, 20);
             this.comboMidiInCh.Name = "comboMidiInCh";
             this.comboMidiInCh.Size = new System.Drawing.Size(87, 20);
             this.comboMidiInCh.TabIndex = 0;
             // 
-            // checkBoxEnableMidiOut
+            // groupBoxMidiOut
             // 
-            this.checkBoxEnableMidiOut.AutoSize = true;
-            this.checkBoxEnableMidiOut.Location = new System.Drawing.Point(13, 46);
-            this.checkBoxEnableMidiOut.Name = "checkBoxEnableMidiOut";
-            this.checkBoxEnableMidiOut.Size = new System.Drawing.Size(112, 16);
-            this.checkBoxEnableMidiOut.TabIndex = 6;
-            this.checkBoxEnableMidiOut.Text = "Enable MIDI OUT";
-            this.checkBoxEnableMidiOut.UseVisualStyleBackColor = true;
+            this.groupBoxMidiOut.Controls.Add(this.checkBoxEnableMidiOut);
+            this.groupBoxMidiOut.Location = new System.Drawing.Point(278, 88);
+            this.groupBoxMidiOut.Name = "groupBoxMidiOut";
+            this.groupBoxMidiOut.Size = new System.Drawing.Size(260, 60);
+            this.groupBoxMidiOut.TabIndex = 8;
+            this.groupBoxMidiOut.TabStop = false;
+            this.groupBoxMidiOut.Text = "MIDI Out";
+            // 
+            // groupBoxNoteControl
+            // 
+            this.groupBoxNoteControl.Controls.Add(this.label1);
+            this.groupBoxNoteControl.Controls.Add(this.nudNoteDelay);
+            this.groupBoxNoteControl.Controls.Add(this.nudNoteOffVelocity);
+            this.groupBoxNoteControl.Controls.Add(this.label2);
+            this.groupBoxNoteControl.Location = new System.Drawing.Point(6, 22);
+            this.groupBoxNoteControl.Name = "groupBoxNoteControl";
+            this.groupBoxNoteControl.Size = new System.Drawing.Size(260, 90);
+            this.groupBoxNoteControl.TabIndex = 9;
+            this.groupBoxNoteControl.TabStop = false;
+            this.groupBoxNoteControl.Text = "Note Control";
             // 
             // OptionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 372);
-            this.Controls.Add(this.gboxMidiDevice);
+            this.ClientSize = new System.Drawing.Size(552, 285);
+            this.Controls.Add(this.groupBoxNoteControl);
+            this.Controls.Add(this.groupBoxMidiOut);
+            this.Controls.Add(this.gboxMidiIn);
             this.Controls.Add(this.gboxArpeggiator);
             this.Controls.Add(this.gboxKeyConfig);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.nudNoteOffVelocity);
-            this.Controls.Add(this.nudNoteDelay);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -296,10 +320,13 @@
             this.gboxArpeggiator.ResumeLayout(false);
             this.gboxArpeggiator.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudArpegDelay)).EndInit();
-            this.gboxMidiDevice.ResumeLayout(false);
-            this.gboxMidiDevice.PerformLayout();
+            this.gboxMidiIn.ResumeLayout(false);
+            this.gboxMidiIn.PerformLayout();
+            this.groupBoxMidiOut.ResumeLayout(false);
+            this.groupBoxMidiOut.PerformLayout();
+            this.groupBoxNoteControl.ResumeLayout(false);
+            this.groupBoxNoteControl.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -321,9 +348,11 @@
         private System.Windows.Forms.CheckBox chbArpeggiatorEnable;
         private System.Windows.Forms.NumericUpDown nudArpegDelay;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.GroupBox gboxMidiDevice;
+        private System.Windows.Forms.GroupBox gboxMidiIn;
         private System.Windows.Forms.Label lblMidiInCh;
         private System.Windows.Forms.ComboBox comboMidiInCh;
         private System.Windows.Forms.CheckBox checkBoxEnableMidiOut;
+        private System.Windows.Forms.GroupBox groupBoxMidiOut;
+        private System.Windows.Forms.GroupBox groupBoxNoteControl;
     }
 }

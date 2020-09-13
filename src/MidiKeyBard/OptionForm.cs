@@ -95,7 +95,6 @@ namespace MidiKeyBard
             Close();
 
             Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
-            
         }
     
         private void btnCancel_Click(object sender, EventArgs e)

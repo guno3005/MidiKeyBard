@@ -26,16 +26,16 @@ namespace MidiKeyBard
             try
             {
                 var ini = new InifileUtils(IniFilePath);
-                ini.setValue(AppSetting.Section, AppSetting.ValueNoteDelay, NoteDelay);
-                ini.setValue(AppSetting.Section, AppSetting.ValueNoteOffThreshold, NoteOffThreshold);
                 ini.setValue(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex, SelectedMidiInIndex);
                 ini.setValue(AppSetting.Section, AppSetting.ValueMidiInCount, MidiInCount);
+                ini.setValue(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex, SelectedMidiOutIndex);
+                ini.setValue(AppSetting.Section, AppSetting.ValueMidiOutCount, MidiOutCount);
+                ini.setValue(AppSetting.Section, AppSetting.ValueNoteDelay, NoteDelay);
+                ini.setValue(AppSetting.Section, AppSetting.ValueNoteOffThreshold, NoteOffThreshold);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorDelay, ArpeggiatorDelay);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorEnable, EnableArpeggiator);
                 ini.setValue(AppSetting.Section, AppSetting.MidiInCh, MidiInCh);
                 ini.setValue(AppSetting.Section, AppSetting.EnebleMidiOut, EnebleMidiOut);
-                ini.setValue(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex, SelectedMidiOutIndex);
-                ini.setValue(AppSetting.Section, AppSetting.ValueMidiOutCount, MidiOutCount);
             }
             catch (Exception)
             {
@@ -60,17 +60,20 @@ namespace MidiKeyBard
                 throw;
             }
         }
-        
 
         internal static void LoadSettingFile()
         {
-            if(System.IO.File.Exists(IniFilePath) == false)
+            LoadSettingFile(Setting.IniFilePath);
+        }
+       internal static void LoadSettingFile(string iniFilePath)
+        {
+            if(System.IO.File.Exists(iniFilePath) == false)
             {
                 return;
             }
             try
             {
-                var ini = new InifileUtils(IniFilePath);
+                var ini = new InifileUtils(iniFilePath);
                 NoteDelay = ini.getValueInt(AppSetting.Section, AppSetting.ValueNoteDelay);
                 NoteOffThreshold = ini.getValueInt(AppSetting.Section, AppSetting.ValueNoteOffThreshold);
                 SelectedMidiInIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex);
@@ -297,7 +300,12 @@ namespace MidiKeyBard
 
         internal static bool LoadSettingFile()
         {
-            if (System.IO.File.Exists(Setting.IniFilePath) == false)
+            return LoadSettingFile(Setting.IniFilePath);
+        }
+
+        internal static bool LoadSettingFile(string iniFilePath)
+        {
+            if (System.IO.File.Exists(iniFilePath) == false)
             {
                 return false;
             }
