@@ -17,19 +17,25 @@ namespace MidiKeyBard
         public static bool EnableArpeggiator = false;
         public static int ArpeggiatorDelay = 50;
         public static int MidiInCh = 0;
+        public static bool EnebleMidiOut = false;
+        public static int SelectedMidiOutIndex = 0;
+        public static int MidiOutCount = 0;
 
         internal static void SaveFile()
         {
             try
             {
                 var ini = new InifileUtils(IniFilePath);
-                ini.setValue(AppSetting.Section, AppSetting.ValueNoteDelay, NoteDelay);
-                ini.setValue(AppSetting.Section, AppSetting.ValueNoteOffThreshold, NoteOffThreshold);
                 ini.setValue(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex, SelectedMidiInIndex);
                 ini.setValue(AppSetting.Section, AppSetting.ValueMidiInCount, MidiInCount);
+                ini.setValue(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex, SelectedMidiOutIndex);
+                ini.setValue(AppSetting.Section, AppSetting.ValueMidiOutCount, MidiOutCount);
+                ini.setValue(AppSetting.Section, AppSetting.ValueNoteDelay, NoteDelay);
+                ini.setValue(AppSetting.Section, AppSetting.ValueNoteOffThreshold, NoteOffThreshold);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorDelay, ArpeggiatorDelay);
-                ini.setValue(AppSetting.Section, AppSetting.ArpeggiatoEnable, EnableArpeggiator);
+                ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorEnable, EnableArpeggiator);
                 ini.setValue(AppSetting.Section, AppSetting.MidiInCh, MidiInCh);
+                ini.setValue(AppSetting.Section, AppSetting.EnebleMidiOut, EnebleMidiOut);
             }
             catch (Exception)
             {
@@ -45,6 +51,8 @@ namespace MidiKeyBard
                 var ini = new InifileUtils(IniFilePath);
                 ini.setValue(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex, SelectedMidiInIndex);
                 ini.setValue(AppSetting.Section, AppSetting.ValueMidiInCount, MidiInCount);
+                ini.setValue(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex, SelectedMidiOutIndex);
+                ini.setValue(AppSetting.Section, AppSetting.ValueMidiOutCount, MidiOutCount);
             }
             catch (Exception)
             {
@@ -52,24 +60,30 @@ namespace MidiKeyBard
                 throw;
             }
         }
-        
 
         internal static void LoadSettingFile()
         {
-            if(System.IO.File.Exists(IniFilePath) == false)
+            LoadSettingFile(Setting.IniFilePath);
+        }
+       internal static void LoadSettingFile(string iniFilePath)
+        {
+            if(System.IO.File.Exists(iniFilePath) == false)
             {
                 return;
             }
             try
             {
-                var ini = new InifileUtils(IniFilePath);
+                var ini = new InifileUtils(iniFilePath);
                 NoteDelay = ini.getValueInt(AppSetting.Section, AppSetting.ValueNoteDelay);
                 NoteOffThreshold = ini.getValueInt(AppSetting.Section, AppSetting.ValueNoteOffThreshold);
                 SelectedMidiInIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex);
                 MidiInCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiInCount);
-                EnableArpeggiator = ini.getValueBool(AppSetting.Section, AppSetting.ArpeggiatoEnable);
+                EnableArpeggiator = ini.getValueBool(AppSetting.Section, AppSetting.ArpeggiatorEnable);
                 ArpeggiatorDelay = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorDelay, 50);
                 MidiInCh = ini.getValueInt(AppSetting.Section, AppSetting.MidiInCh, 0);
+                EnebleMidiOut = ini.getValueBool(AppSetting.Section, AppSetting.EnebleMidiOut);
+                SelectedMidiOutIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex);
+                MidiOutCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiOutCount);
             }
             catch (Exception)
             {
@@ -86,8 +100,11 @@ namespace MidiKeyBard
             public const String ValueSelectedMidiInIndex = "SelectedMidiInIndex";
             public const String ValueMidiInCount = "MidiInCount";
             public const String ArpeggiatorDelay = "ArpeggiatorDelay";
-            public const String ArpeggiatoEnable = "ArpeggiatoEnable";
+            public const String ArpeggiatorEnable = "ArpeggiatorEnable";
             public const String MidiInCh = "MidiInCh";
+            public const String EnebleMidiOut = "EnebleMidiOut";
+            public const String ValueSelectedMidiOutIndex = "SelectedMidiOutIndex";
+            public const String ValueMidiOutCount = "MidiOutCount";
         }
     }
 
@@ -283,7 +300,12 @@ namespace MidiKeyBard
 
         internal static bool LoadSettingFile()
         {
-            if (System.IO.File.Exists(Setting.IniFilePath) == false)
+            return LoadSettingFile(Setting.IniFilePath);
+        }
+
+        internal static bool LoadSettingFile(string iniFilePath)
+        {
+            if (System.IO.File.Exists(iniFilePath) == false)
             {
                 return false;
             }

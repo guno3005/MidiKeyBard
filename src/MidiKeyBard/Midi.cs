@@ -14,6 +14,7 @@ namespace MidiKeyBard
         public const int NoteNumberMax = 127;
 
         CMIDIIn _inPort;
+        CMIDIOut _outPort;
         System.Timers.Timer _recvTimer;
 
         public Midi()
@@ -32,6 +33,7 @@ namespace MidiKeyBard
             var len = message.Length;
             if (len > 0)
             {
+                _outPort?.PutMIDIMessage(message);
                 inPort_Received(message);
             } 
         }
@@ -48,7 +50,7 @@ namespace MidiKeyBard
             return list;
         }
 
-        public void OpenPort(string name)
+        public void OpenInPort(string name)
         {
             _recvTimer.Stop();
 
@@ -65,7 +67,7 @@ namespace MidiKeyBard
             }
             
         }
-        public void ClosePort()
+        public void CloseInPort()
         {
 
             if (_inPort == null)
@@ -89,6 +91,7 @@ namespace MidiKeyBard
 
         public static void inPort_Received(byte[] message)
         {
+
             try
             {
                 if (message.Length < 2)
@@ -164,6 +167,53 @@ namespace MidiKeyBard
             {
                 Channel.Instance.Put(new NoteEvent(message[1], false));
             }
+        }
+
+        public static List<string> EnumOutput()
+        {
+            int count = CMIDIOut.GetDeviceNum();
+            var list = new List<string>();
+            for( int i = 0; i < count; i++)
+            {
+                list.Add(CMIDIOut.GetDeviceName(i));
+            }
+            return list;
+        }
+
+
+        public void OpenOutPort(string name)
+        {
+            _outPort = new CMIDIOut();
+            try
+            {
+                _outPort.Reopen(name);
+            }
+            catch (Exception)
+            {
+                //TODO:
+                throw;
+            }
+
+        }
+        public void CloseOutPort()
+        {
+
+            if (_outPort == null)
+            {
+                return;
+            }
+
+            try
+            {
+                _outPort.Close();
+                _outPort = null;
+            }
+            catch (Exception)
+            {
+                //TODO:
+                throw;
+            }
+
         }
 
         private static int GetMidiMessageVelocity(byte[] message, int defaultVelocity)

@@ -70,6 +70,7 @@ namespace MidiKeyBard
             chbArpeggiatorEnable.Checked = Setting.EnableArpeggiator;
             nudArpegDelay.Value = Setting.ArpeggiatorDelay;
             comboMidiInCh.SelectedValue = Setting.MidiInCh;
+            checkBoxEnableMidiOut.Checked = Setting.EnebleMidiOut;
 
             KeySettingMap = KeySetting.GetKeyMap();
         }
@@ -86,6 +87,7 @@ namespace MidiKeyBard
             Setting.EnableArpeggiator = chbArpeggiatorEnable.Checked;
             Setting.ArpeggiatorDelay = Math.Max((int)nudArpegDelay.Value, Setting.NoteDelay);
             Setting.MidiInCh = (int)comboMidiInCh.SelectedValue;
+            Setting.EnebleMidiOut = checkBoxEnableMidiOut.Checked;
             Setting.SaveFile();
 
             KeySetting.SetKeyMap(KeySettingMap);
@@ -93,7 +95,6 @@ namespace MidiKeyBard
             Close();
 
             Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
-            
         }
     
         private void btnCancel_Click(object sender, EventArgs e)
