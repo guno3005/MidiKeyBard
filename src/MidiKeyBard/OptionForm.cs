@@ -30,7 +30,7 @@ namespace MidiKeyBard
             midiInItems.Columns.Add(ColValue, typeof(int));
             var items = new Dictionary<string, int>()
             {
-                { "ALL",  -1 },
+                { "ALL",  Setting.MidiInChAll },
                 { "1",  0 },
                 { "2",  1 },
                 { "3",  2 },

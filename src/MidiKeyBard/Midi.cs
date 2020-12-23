@@ -100,7 +100,7 @@ namespace MidiKeyBard
                 }
 
                 var ch = ByteToMidiCh(message[0]);
-                if ((Setting.MidiInCh != -1) && (Setting.MidiInCh != ch))
+                if ((Setting.MidiInCh != Setting.MidiInChAll) && (Setting.MidiInCh != ch))
                 {
                     return;
                 }
