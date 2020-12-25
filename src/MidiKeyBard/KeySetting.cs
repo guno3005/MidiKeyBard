@@ -346,7 +346,9 @@ namespace MidiKeyBard
             var items = new List<TableItem>();
 
             var ini = new InifileUtils(path);
-            for(int i = 0; i < 100;i++)
+            var itemCount = ini.getValueInt(General.Section, General.ValueTableItemCount, KeySetting.KeyMapSize);
+
+            for (int i = 0; i < itemCount; i++)
             {
                 int note = ini.getValueInt(TableItem.Section(i), TableItem.ValueNoteNumber);
                 int code = ini.getValueInt(TableItem.Section(i), TableItem.ValueKeyCode);
@@ -367,15 +369,18 @@ namespace MidiKeyBard
         internal static short[] ToKeyMap(MidiKeyUtilityConfig config)
         {
             short[] keyMap = new short[KeySetting.KeyMapSize];
-            foreach (var i in config.TableItems)
+            foreach (var item in config.TableItems)
             {
-                var note = i.NoteNumber;
+                var note = item.NoteNumber;
                 if (note < 0 || keyMap.Length <= note)
                 {
                     Console.WriteLine("A note out of range.");
                     throw new ArgumentException(string.Format("A note out of range. note:{0}", note));
                 }
-                keyMap[i.NoteNumber] = (short)i.KeyCode;
+                if((item.KeyCode > 0)&&(item.KeyCode < 255))    //0と255は無効なKeyCode
+                {
+                    keyMap[item.NoteNumber] = (short)item.KeyCode;
+                }
             }
 
             return keyMap;
@@ -385,6 +390,7 @@ namespace MidiKeyBard
         {
             public const String Section = "General";
             public const String ValueMidiInDevice = "MidiInDevice";
+            public const String ValueTableItemCount = "TableItemCount";
         }
 
         private class TableItem
