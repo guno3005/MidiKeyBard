@@ -15,6 +15,7 @@ namespace MidiKeyBard
         public static int SelectedMidiInIndex = 0;
         public static int MidiInCount = 0;
         public static bool EnableArpeggiator = false;
+        public static bool EnableTremolo = false;
         public static int ArpeggiatorDelay = 50;
         public static int MidiInCh = MidiInChAll;
         public const int MidiInChAll = -1;
@@ -35,6 +36,7 @@ namespace MidiKeyBard
                 ini.setValue(AppSetting.Section, AppSetting.ValueNoteOffThreshold, NoteOffThreshold);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorDelay, ArpeggiatorDelay);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorEnable, EnableArpeggiator);
+                ini.setValue(AppSetting.Section, AppSetting.TremoloEnable, EnableTremolo);
                 ini.setValue(AppSetting.Section, AppSetting.MidiInCh, MidiInCh);
                 ini.setValue(AppSetting.Section, AppSetting.EnebleMidiOut, EnebleMidiOut);
             }
@@ -80,6 +82,7 @@ namespace MidiKeyBard
                 SelectedMidiInIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex);
                 MidiInCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiInCount);
                 EnableArpeggiator = ini.getValueBool(AppSetting.Section, AppSetting.ArpeggiatorEnable);
+                EnableTremolo = ini.getValueBool(AppSetting.Section, AppSetting.TremoloEnable);
                 ArpeggiatorDelay = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorDelay, 50);
                 MidiInCh = ini.getValueInt(AppSetting.Section, AppSetting.MidiInCh, MidiInChAll);
                 EnebleMidiOut = ini.getValueBool(AppSetting.Section, AppSetting.EnebleMidiOut);
@@ -102,6 +105,7 @@ namespace MidiKeyBard
             public const String ValueMidiInCount = "MidiInCount";
             public const String ArpeggiatorDelay = "ArpeggiatorDelay";
             public const String ArpeggiatorEnable = "ArpeggiatorEnable";
+            public const String TremoloEnable = "TremoloEnable";
             public const String MidiInCh = "MidiInCh";
             public const String EnebleMidiOut = "EnebleMidiOut";
             public const String ValueSelectedMidiOutIndex = "SelectedMidiOutIndex";
@@ -124,7 +128,8 @@ namespace MidiKeyBard
 
         public static void SetKeyMap(short[] map)
         {
-            if(map.Length != NoteKeyMap.Length){
+            if(map.Length != NoteKeyMap.Length)
+            {
                 throw new FormatException();
             }
             for(int i=0; i<NoteKeyMap.Length; i++)

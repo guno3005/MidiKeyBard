@@ -45,11 +45,12 @@
             this.nudArpegDelay = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.gboxMidiIn = new System.Windows.Forms.GroupBox();
-            this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
             this.lblMidiInCh = new System.Windows.Forms.Label();
             this.comboMidiInCh = new System.Windows.Forms.ComboBox();
+            this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
             this.groupBoxMidiOut = new System.Windows.Forms.GroupBox();
             this.groupBoxNoteControl = new System.Windows.Forms.GroupBox();
+            this.chbTremoloEnable = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteOffVelocity)).BeginInit();
             this.gboxKeyConfig.SuspendLayout();
@@ -177,7 +178,7 @@
             this.gboxKeyConfig.Controls.Add(this.label4);
             this.gboxKeyConfig.Controls.Add(this.btnPresetA);
             this.gboxKeyConfig.Controls.Add(this.btnImport);
-            this.gboxKeyConfig.Location = new System.Drawing.Point(6, 139);
+            this.gboxKeyConfig.Location = new System.Drawing.Point(278, 154);
             this.gboxKeyConfig.Name = "gboxKeyConfig";
             this.gboxKeyConfig.Size = new System.Drawing.Size(260, 90);
             this.gboxKeyConfig.TabIndex = 6;
@@ -186,12 +187,13 @@
             // 
             // gboxArpeggiator
             // 
+            this.gboxArpeggiator.Controls.Add(this.chbTremoloEnable);
             this.gboxArpeggiator.Controls.Add(this.chbArpeggiatorEnable);
             this.gboxArpeggiator.Controls.Add(this.nudArpegDelay);
             this.gboxArpeggiator.Controls.Add(this.label5);
-            this.gboxArpeggiator.Location = new System.Drawing.Point(278, 154);
+            this.gboxArpeggiator.Location = new System.Drawing.Point(6, 118);
             this.gboxArpeggiator.Name = "gboxArpeggiator";
-            this.gboxArpeggiator.Size = new System.Drawing.Size(260, 75);
+            this.gboxArpeggiator.Size = new System.Drawing.Size(260, 109);
             this.gboxArpeggiator.TabIndex = 6;
             this.gboxArpeggiator.TabStop = false;
             this.gboxArpeggiator.Text = "Arpeggiator";
@@ -205,10 +207,11 @@
             this.chbArpeggiatorEnable.TabIndex = 5;
             this.chbArpeggiatorEnable.Text = "Enable Arpeggiator";
             this.chbArpeggiatorEnable.UseVisualStyleBackColor = true;
+            this.chbArpeggiatorEnable.CheckedChanged += new System.EventHandler(this.chbArpeggiatorEnable_CheckedChanged);
             // 
             // nudArpegDelay
             // 
-            this.nudArpegDelay.Location = new System.Drawing.Point(166, 48);
+            this.nudArpegDelay.Location = new System.Drawing.Point(166, 75);
             this.nudArpegDelay.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -226,7 +229,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(28, 50);
+            this.label5.Location = new System.Drawing.Point(13, 77);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(110, 12);
             this.label5.TabIndex = 2;
@@ -242,16 +245,6 @@
             this.gboxMidiIn.TabIndex = 7;
             this.gboxMidiIn.TabStop = false;
             this.gboxMidiIn.Text = "MIDI In";
-            // 
-            // checkBoxEnableMidiOut
-            // 
-            this.checkBoxEnableMidiOut.AutoSize = true;
-            this.checkBoxEnableMidiOut.Location = new System.Drawing.Point(15, 24);
-            this.checkBoxEnableMidiOut.Name = "checkBoxEnableMidiOut";
-            this.checkBoxEnableMidiOut.Size = new System.Drawing.Size(112, 16);
-            this.checkBoxEnableMidiOut.TabIndex = 6;
-            this.checkBoxEnableMidiOut.Text = "Enable MIDI OUT";
-            this.checkBoxEnableMidiOut.UseVisualStyleBackColor = true;
             // 
             // lblMidiInCh
             // 
@@ -269,6 +262,16 @@
             this.comboMidiInCh.Name = "comboMidiInCh";
             this.comboMidiInCh.Size = new System.Drawing.Size(87, 20);
             this.comboMidiInCh.TabIndex = 0;
+            // 
+            // checkBoxEnableMidiOut
+            // 
+            this.checkBoxEnableMidiOut.AutoSize = true;
+            this.checkBoxEnableMidiOut.Location = new System.Drawing.Point(15, 24);
+            this.checkBoxEnableMidiOut.Name = "checkBoxEnableMidiOut";
+            this.checkBoxEnableMidiOut.Size = new System.Drawing.Size(112, 16);
+            this.checkBoxEnableMidiOut.TabIndex = 6;
+            this.checkBoxEnableMidiOut.Text = "Enable MIDI OUT";
+            this.checkBoxEnableMidiOut.UseVisualStyleBackColor = true;
             // 
             // groupBoxMidiOut
             // 
@@ -292,6 +295,17 @@
             this.groupBoxNoteControl.TabIndex = 9;
             this.groupBoxNoteControl.TabStop = false;
             this.groupBoxNoteControl.Text = "Note Control";
+            // 
+            // chbTremoloEnable
+            // 
+            this.chbTremoloEnable.AutoSize = true;
+            this.chbTremoloEnable.Enabled = false;
+            this.chbTremoloEnable.Location = new System.Drawing.Point(30, 46);
+            this.chbTremoloEnable.Name = "chbTremoloEnable";
+            this.chbTremoloEnable.Size = new System.Drawing.Size(103, 16);
+            this.chbTremoloEnable.TabIndex = 5;
+            this.chbTremoloEnable.Text = "Enable Tremolo";
+            this.chbTremoloEnable.UseVisualStyleBackColor = true;
             // 
             // OptionForm
             // 
@@ -354,5 +368,6 @@
         private System.Windows.Forms.CheckBox checkBoxEnableMidiOut;
         private System.Windows.Forms.GroupBox groupBoxMidiOut;
         private System.Windows.Forms.GroupBox groupBoxNoteControl;
+        private System.Windows.Forms.CheckBox chbTremoloEnable;
     }
 }
