@@ -143,7 +143,8 @@ namespace MidiKeyBard
             //CloseMidis();
             if (_inOutControl != null)
             {
-                _inOutControl.CloseDevices();
+                _inOutControl.CloseMidiIn();
+                _inOutControl.CloseMidiOut();
             }
 
             Setting.SaveState();

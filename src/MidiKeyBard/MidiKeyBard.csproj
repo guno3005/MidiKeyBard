@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="Arpeggiator.cs" />
     <Compile Include="Channel.cs" />
-    <Compile Include="DebugLog.cs" />
     <Compile Include="InifileUtils.cs" />
     <Compile Include="InOutControl.cs" />
     <Compile Include="Keyboard.cs" />

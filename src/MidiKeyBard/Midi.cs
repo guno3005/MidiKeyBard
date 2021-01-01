@@ -101,11 +101,9 @@ namespace MidiKeyBard
                 switch (type)
                 {
                     case MidiEventType.NOTE_ON:
-                        DebugLog.WriteLine(message[0].ToString() + " " + message[1].ToString() + " ON");
                         SubReceivedNoteOn(message);
                         break;
                     case MidiEventType.NOTE_OFF:
-                        DebugLog.WriteLine(message[0].ToString() + " " + message[1].ToString() + " OFF");
                         SubReceivedNoteOff(message);
                         break;
                     default:

@@ -14,7 +14,7 @@ namespace MidiKeyBard
 
         private ConcurrentQueue<NoteEvent> _noteQueue;  // MIDI入力された音符
         private Stack<byte> _noteOffStack;  // 出力OFF待ちの音符
-        private bool[] _inputNotes = new bool[Midi.NoteNumberMax + 1];  // 押されたままの音符はtrue
+        private bool[] _inputNotes = new bool[Midi.NoteNumberMax + 1];  // 入力音符テーブル。押されたままの音符はtrue
         private int _inputNotesOnCount = 0; // 押されたままの音符の数（trueの数）
         private System.Diagnostics.Stopwatch _swLastNoteOn = new System.Diagnostics.Stopwatch();
         private int _noteIndex = 0;
@@ -57,23 +57,16 @@ namespace MidiKeyBard
                 return;
             }
 
-            var hasTableOnNote = UpdateChordNotesAndPutNote();
+            int hasTableOnNote = UpdateNoteTableAndPutNote();
             if (hasTableOnNote == 0)
             {
-                //if (_lastAutoOnNote <= Midi.NoteNumberMax)
-                //{
-                //    DebugLog.WriteLine(_lastAutoOnNote.ToString() + " OFF");
-                //    Channel.Instance.Put(new NoteEvent(_lastAutoOnNote, false));
-                //    _outputNotes[_lastAutoOnNote] = false;
-                //    _lastAutoOnNote = Byte.MaxValue;
-                //}
                 return;
             }
 
-            var noteNum = Byte.MaxValue;
+            byte noteNum = Byte.MaxValue;
             for (var i = 0; i < _inputNotes.Length; i++)
             {
-                noteNum = (Byte)((_noteIndex + i) % _inputNotes.Length);
+                noteNum = (byte)((_noteIndex + i) % _inputNotes.Length);
                 if (_inputNotes[noteNum] == true)
                 {
                     break;
@@ -82,12 +75,12 @@ namespace MidiKeyBard
 
             if (noteNum < _inputNotes.Length)
             {
-                DebugLog.WriteLine("noteNum:" + noteNum.ToString());
-                var done = PutArpeggioNotes(noteNum, hasTableOnNote);
+                bool done = PutArpeggioNotes(noteNum, hasTableOnNote);
                 if (done)
-                {
+                {   // 音符の出力が完了したのでIndexを次へすすめる
                     _noteIndex = noteNum + 1;
                 }
+                // else: delay待ちのため出力しない。同じIndexでもう一度処理する
             }
             else
             {
@@ -95,14 +88,59 @@ namespace MidiKeyBard
             }
 
         }
+        public void Put(NoteEvent note)
+        {
+            _noteQueue.Enqueue(note);
+        }
 
-        enum ArpgEvent
+        private int UpdateNoteTableAndPutNote()
+        {
+            if (_noteQueue.Count <= 0)
+            {
+                return _inputNotesOnCount;
+            }
+
+            bool changed = false;
+            NoteEvent note;
+
+            if (_noteQueue.TryDequeue(out note))
+            {
+                changed = true;
+                if (note.IsOn)
+                {
+                    // note ON
+                    Channel.Instance.Put(note);
+                    _swLastNoteOn.Restart();
+                    _inputNotes[note.Note] = true;
+                    _noteOffStack.Push(note.Note);
+                }
+                else
+                {
+                    // note.Off
+                    Channel.Instance.Put(note);
+                    _inputNotes[note.Note] = false;
+                }
+            }
+            else
+            {
+                //TODO:
+                throw new InvalidOperationException("noteQueue is empty.");
+            }
+
+
+            if (changed)
+            {
+                _inputNotesOnCount = _inputNotes.Where((noteOn) => noteOn).Count();
+            }
+            return _inputNotesOnCount;
+        }
+
+        private enum ArpgEvent
         {
             None,
             OtherNote,
             Tremolo
         }
-
 
         private bool PutArpeggioNotes(byte noteNum, int noteOnCount)
         {
@@ -133,7 +171,7 @@ namespace MidiKeyBard
 
 
             if (arpgEvent == ArpgEvent.OtherNote)
-            {   // 異なる音高
+            {   // 最後に出力した音と異なる音高
                 var delay = CalcArpgDelay(Setting.ArpeggiatorDelay, noteOnCount, Setting.NoteDelay);
                 if ((_swLastNoteOn.ElapsedMilliseconds > (delay - Setting.NoteDelay))
                     && (_noteOffStack.Count > 0))
@@ -141,14 +179,12 @@ namespace MidiKeyBard
                     while (_noteOffStack.Count > 0)
                     {
                         var oldNote = _noteOffStack.Pop();
-                        DebugLog.WriteLine(oldNote.ToString() + " OFF");
                         Channel.Instance.Put(new NoteEvent(oldNote, false));
                     }
                 }
 
                 if (_swLastNoteOn.ElapsedMilliseconds > delay)
                 {
-                    DebugLog.WriteLine(noteNum.ToString() + " ON");
                     Channel.Instance.Put(new NoteEvent(noteNum, true));
                     _noteOffStack.Push(noteNum);
                     _swLastNoteOn.Restart();
@@ -157,7 +193,7 @@ namespace MidiKeyBard
                 return false;
             }
             else if (arpgEvent == ArpgEvent.Tremolo)
-            {   // 同じ音高 & トレモロ有効
+            {   // 最後に出力した音と同じ音高 & トレモロ有効
                 var delay = CalcArpgDelay(Setting.ArpeggiatorDelay, 0, Setting.NoteDelay);
                 if ((_swLastNoteOn.ElapsedMilliseconds > (delay - Setting.NoteDelay))
                     && (_noteOffStack.Count > 0))
@@ -165,13 +201,11 @@ namespace MidiKeyBard
                     while (_noteOffStack.Count > 0)
                     {
                         var oldNote = _noteOffStack.Pop();
-                        DebugLog.WriteLine(oldNote.ToString() + " OFF");
                         Channel.Instance.Put(new NoteEvent(oldNote, false));
                     }
                 }
                 if (_swLastNoteOn.ElapsedMilliseconds > delay)
                 {
-                    DebugLog.WriteLine(noteNum.ToString() + " ON");
                     Channel.Instance.Put(new NoteEvent(noteNum, true));
                     _noteOffStack.Push(noteNum);
                     _swLastNoteOn.Restart();
@@ -180,60 +214,10 @@ namespace MidiKeyBard
                 return false;
             }
             else
-            {
-                // (note == _lastOnNote)
+            {   // 最後に出力した音と同じ音高 & トレモロ無効
                 // do nothing
-                return false;
+                return true;
             }
-        }
-
-        private int UpdateChordNotesAndPutNote()
-        {
-            if (_noteQueue.Count <= 0)
-            {
-                return _inputNotesOnCount;
-            }
-
-            bool changed = false;
-            NoteEvent note;
-
-            if (_noteQueue.TryDequeue(out note))
-            {
-                changed = true;
-                if (note.IsOn)
-                {
-                    // note ON
-                    DebugLog.WriteLine(note.Note.ToString() + " ON");
-                    Channel.Instance.Put(note);
-                    _swLastNoteOn.Restart();
-                    _inputNotes[note.Note] = true;
-                    _noteOffStack.Push(note.Note);
-                }
-                else
-                {
-                    // note.Off
-                    DebugLog.WriteLine(note.Note.ToString() + " OFF");
-                    Channel.Instance.Put(note);
-                    _inputNotes[note.Note] = false;
-                }
-            }
-            else
-            {
-                //TODO:
-                throw new InvalidOperationException("noteQueue is empty.");
-            }
-
-
-            if (changed)
-            {
-                _inputNotesOnCount = _inputNotes.Where((noteOn) => noteOn).Count();
-            }
-            return _inputNotesOnCount;
-        }
-
-        public void Put(NoteEvent note)
-        {
-            _noteQueue.Enqueue(note);
         }
 
         private static long CalcArpgDelay(long arpgDelay, long count, long noteDelay)

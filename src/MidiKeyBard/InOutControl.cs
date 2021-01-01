@@ -10,7 +10,7 @@ namespace MidiKeyBard
     {
         private static Midi _midi;
         private bool _cancel = false;
-        private bool _canceled = false;
+        private bool _isRunning = false;
 
         public InOutControl()
         {
@@ -20,7 +20,7 @@ namespace MidiKeyBard
         public void Stop()
         {
             _cancel = true;
-            while (!_canceled)
+            while (_isRunning)  // StartMainLoopの完了を待つ
             {
                 Task.Delay(100).Wait();
             }
@@ -29,7 +29,6 @@ namespace MidiKeyBard
 
         public void StartMainLoop()
         {
-            _canceled = false;
             Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
 
             Task.Factory.StartNew(() =>
@@ -38,53 +37,66 @@ namespace MidiKeyBard
                 swNoteDelay.Start();
                 short inputKey = 0;
                 NoteEvent inputNote = null;
-                while (!_cancel)
+
+                try
                 {
-                    for (var i = 0; i < 10; i++)
+                    _isRunning = true;
+
+                    while (!_cancel)
                     {
-                        if (_cancel)
+                        for (var i = 0; i < 10; i++)    // CPUの負荷軽減のため10回ごとにDelay
                         {
-                            break;
-                        }
-
-                        _midi.ReceiveMIDIMessage();
-
-                        Arpeggiator.Instance.Update();
-
-
-                        if (inputKey == 0)
-                        {
-                            inputNote = Channel.Instance.Get();
-                            if (inputNote != null)
+                            if (_cancel)
                             {
-                                inputKey = KeySetting.NoteToKeyCode(inputNote.Note);
+                                break;
                             }
-                        }
 
-                        if (inputKey != 0 && inputNote != null)
-                        {
-                            if (inputNote.IsOn)
+                            _midi.ReceiveMIDIMessage();
+
+                            Arpeggiator.Instance.Update();
+
+
+                            if (inputKey == 0)  // 出力待ちのKey(音符)が無い場合
                             {
-                                var elapse = swNoteDelay.ElapsedMilliseconds;
-                                if (elapse >= Setting.NoteDelay)
+                                inputNote = Channel.Instance.Get();
+                                if (inputNote != null)
                                 {
-                                    Keyboard.SendKey(inputKey, inputNote.IsOn);
-                                    swNoteDelay.Restart();
-                                    inputKey = 0;
-                                    inputNote = null;
+                                    inputKey = KeySetting.NoteToKeyCode(inputNote.Note);
                                 }
                             }
-                            else
+
+                            if (inputKey != 0 && inputNote != null) // 出力待ちのKey(音符)がある場合
                             {
-                                Keyboard.SendKey(inputKey, inputNote.IsOn);
-                                inputKey = 0;
+                                if (inputNote.IsOn)
+                                {   // ON のKeyはNoteDelayを経過したら出力する
+                                    var elapse = swNoteDelay.ElapsedMilliseconds;
+                                    if (elapse >= Setting.NoteDelay)
+                                    {
+                                        Keyboard.SendKey(inputKey, inputNote.IsOn);
+                                        swNoteDelay.Restart();
+                                        inputKey = 0;
+                                        inputNote = null;
+                                    }
+                                }
+                                else
+                                {   // OFF のKeyは直ちに出力する
+                                    Keyboard.SendKey(inputKey, inputNote.IsOn);
+                                    inputKey = 0;
+                                }
                             }
                         }
-                    }
 
-                    Task.Delay(1).Wait();
+                        Task.Delay(1).Wait();   // CPUの負荷軽減のためDelay
+                    }
                 }
-                _canceled = true;
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    _isRunning = false;
+                }
             });
         }
 
@@ -96,12 +108,6 @@ namespace MidiKeyBard
         internal void CloseMidiIn()
         {
             _midi.CloseInPort();
-        }
-
-        internal void CloseDevices()
-        {
-            _midi.CloseInPort();
-            _midi.CloseOutPort();
         }
 
         internal void OpenMidiIn(string item)

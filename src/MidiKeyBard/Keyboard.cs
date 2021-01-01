@@ -110,7 +110,6 @@ namespace MidiKeyBard
             inp.ki.dwExtraInfo = 0;
             inp.ki.time = 0;
 
-            DebugLog.WriteLine(key.ToString() + isDown.ToString());
             SendInput( num, ref inp, Marshal.SizeOf(inp));
         }
 
