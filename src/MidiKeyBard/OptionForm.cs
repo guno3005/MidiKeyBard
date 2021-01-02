@@ -68,7 +68,8 @@ namespace MidiKeyBard
             nudNoteDelay.Value = Setting.NoteDelay;
             nudNoteOffVelocity.Value = Setting.NoteOffThreshold;
             chbArpeggiatorEnable.Checked = Setting.EnableArpeggiator;
-            nudArpegDelay.Value = Setting.ArpeggiatorDelay;
+            chbTremoloEnable.Checked = Setting.EnableTremolo;
+            nudArpegDelay.Value = Setting.ArpeggiatorInterval;
             comboMidiInCh.SelectedValue = Setting.MidiInCh;
             checkBoxEnableMidiOut.Checked = Setting.EnebleMidiOut;
 
@@ -85,7 +86,8 @@ namespace MidiKeyBard
             Setting.NoteDelay = (int)nudNoteDelay.Value;
             Setting.NoteOffThreshold = (int)nudNoteOffVelocity.Value;
             Setting.EnableArpeggiator = chbArpeggiatorEnable.Checked;
-            Setting.ArpeggiatorDelay = Math.Max((int)nudArpegDelay.Value, Setting.NoteDelay);
+            Setting.EnableTremolo = chbTremoloEnable.Checked;
+            Setting.ArpeggiatorInterval = Math.Max((int)nudArpegDelay.Value, Setting.NoteDelay);
             Setting.MidiInCh = (int)comboMidiInCh.SelectedValue;
             Setting.EnebleMidiOut = checkBoxEnableMidiOut.Checked;
             Setting.SaveFile();
@@ -93,8 +95,6 @@ namespace MidiKeyBard
             KeySetting.SetKeyMap(KeySettingMap);
             KeySetting.SaveFile();
             Close();
-
-            Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
         }
     
         private void btnCancel_Click(object sender, EventArgs e)
@@ -142,5 +142,9 @@ namespace MidiKeyBard
             return;
         }
 
+        private void chbArpeggiatorEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            chbTremoloEnable.Enabled = chbArpeggiatorEnable.Checked;
+        }
     }
 }

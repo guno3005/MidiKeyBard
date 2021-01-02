@@ -9,156 +9,218 @@ namespace MidiKeyBard
 {
     class Arpeggiator
     {
-        private ConcurrentQueue<byte> _offQueue;
-        private ConcurrentQueue<byte> _onQueue;
         private static Arpeggiator _instance = new Arpeggiator();
-        private List<Byte> _chordNotes;
-        private bool _enable = false;
         public static Arpeggiator Instance = _instance;
-        private byte _lastOnNote;
+
+        private Queue<NoteEvent> _noteQueue;  // MIDI入力された音符
+        private Queue<byte> _noteOffQueue;  // 出力OFF待ちの音符
+        private byte _lastOnNote = byte.MaxValue;
+        private bool[] _inputNotes = new bool[Midi.NoteNumberMax + 1];  // 入力音符テーブル。押されたままの音符はtrue
+        private int _inputNotesOnCount = 0; // 押されたままの音符の数（trueの数）
+        private System.Diagnostics.Stopwatch _swLastNoteOn = new System.Diagnostics.Stopwatch();
+        private int _noteIndex = 0;
+        private bool _enable = false;
+
+        private const int MinInterval = 50; // 連打の最小間隔。りすこさん研究による
 
         private Arpeggiator()
         {
-            _chordNotes = new List<Byte>();
-            _offQueue = new ConcurrentQueue<byte>();
-            _onQueue = new ConcurrentQueue<byte>();
+            _noteQueue = new Queue<NoteEvent>();
+            _noteOffQueue = new Queue<byte>();
         }
 
         public void SetEnable(bool enable)
         {
-            if(enable){
-                Start();
-            }else{
-                Stop();
-            }
-        }
-
-        public void Start()
-        {
-            if (_enable)
+            if (enable && !_enable)
             {
-                ; //do nothing
-            }
-            else
-            {
+                // Start
                 _enable = true;
-                Task.Run(() => { ReceivingLoop(); });
+                _inputNotes.Initialize();
+                _swLastNoteOn.Start();
             }
-        }
-        public void Stop()
-        {
-            _enable = false;
-        }
-        public void ReceivingLoop()
-        {
-            while(_enable)
+            else if (!enable)
             {
-                if (_chordNotes.Count == 0)
-                {
-                    if (_lastOnNote <= Midi.NoteNumberMax)
-                    {
-                        Channel.Instance.Put(new NoteEvent(_lastOnNote, false));
-                    }
-                    _lastOnNote = Byte.MaxValue;
-                }
-                else
-                {
-                    PutArpeggioNotes(_chordNotes);
-                }
-
-                UpdateChordNotes(ref _chordNotes);
-
-                System.Threading.Thread.Sleep(1);
-            }
-        }
-        private void PutArpeggioNotes(List<Byte> chordNotes)
-        {
-            foreach (var note in chordNotes)
-            {
-                if (note != _lastOnNote)
-                {
-                    if (_lastOnNote <= Midi.NoteNumberMax)
-                    {
-                        Channel.Instance.Put(new NoteEvent(_lastOnNote, false));
-                    }
-                    Channel.Instance.Put(new NoteEvent(note, true));
-                    _lastOnNote = note;
-                    if (chordNotes.Count != 0)
-                    {
-                        System.Threading.Thread.Sleep((int)(Setting.ArpeggiatorDelay));
-                    }
-                }
-            }
-        }
-
-        private void UpdateChordNotes(ref List<Byte> chordNotes)
-        {
-            while (_onQueue.Count > 0)
-            {
-                byte note;
-                if (_onQueue.TryDequeue(out note))
-                {
-                    if (chordNotes.Contains(note))
-                    {
-                        ; //do nothing
-                    }
-                    else
-                    {
-                        chordNotes.Add(note);
-                    }
-                }
-                else
-                {
-                    //TODO:
-                    throw new InvalidOperationException("onQueue is empty.");
-                }
-
-            }
-            while (_offQueue.Count > 0)
-            {
-                byte note;
-                if (_offQueue.TryDequeue(out note))
-                {
-                    if (chordNotes.Contains(note))
-                    {
-                        chordNotes.Remove(note);
-                    }
-                    else
-                    {
-                        ; //do nothing
-                    }
-                }
-                else
-                {
-                    //TODO:
-                    throw new InvalidOperationException("offQueue is empty.");
-                }
-
-
-            }
-        }
-
-        public void PutOn(byte note)
-        {
-            if (_onQueue.Contains(note))
-            {
-                ; //do nothing
+                // Stop
+                _enable = false;
+                _inputNotes.Initialize();
+                _swLastNoteOn.Reset();
             }
             else
             {
-                _onQueue.Enqueue(note);
-            }            
-        }
-        public void TakeOff(byte note)
-        {
-            if (_offQueue.Contains(note))
-            {
                 ; //do nothing
+
+            }
+        }
+
+
+        public void Update()
+        {
+            if (_enable == false)
+            {
+                return;
+            }
+
+            int hasTableOnNote = UpdateNoteTableAndPutNote();
+            if (hasTableOnNote == 0)
+            {
+                _lastOnNote = byte.MaxValue;
+                return;
+            }
+
+            byte noteNum = Byte.MaxValue;
+            for (var i = 0; i < _inputNotes.Length; i++)
+            {
+                noteNum = (byte)((_noteIndex + i) % _inputNotes.Length);
+                if (_inputNotes[noteNum] == true)
+                {
+                    break;
+                }
+            }
+
+            if (noteNum < _inputNotes.Length)
+            {
+                bool done = PutArpeggioNotes(noteNum, hasTableOnNote);
+                if (done)
+                {   // 音符の出力が完了したのでIndexを次へすすめる
+                    _noteIndex = noteNum + 1;
+                }
+                // else: delay待ちのため出力しない。同じIndexでもう一度処理する
             }
             else
             {
-                _offQueue.Enqueue(note); 
+                _noteIndex = 0;
             }
+
+        }
+        public void Put(NoteEvent note)
+        {
+            _noteQueue.Enqueue(note);
+        }
+
+        private int UpdateNoteTableAndPutNote()
+        {
+            if (_noteQueue.Count <= 0)
+            {
+                return _inputNotesOnCount;
+            }
+
+            NoteEvent note = _noteQueue.Dequeue();
+
+            if (note.IsOn)
+            {
+                // note ON
+                Channel.Instance.Put(note);
+                _swLastNoteOn.Restart();
+                _inputNotes[note.Note] = true;
+                _noteOffQueue.Enqueue(note.Note);
+                _lastOnNote = note.Note;
+            }
+            else
+            {
+                // note.Off
+                Channel.Instance.Put(note);
+                _inputNotes[note.Note] = false;
+            }
+
+            _inputNotesOnCount = _inputNotes.Where((noteOn) => noteOn).Count();
+            return _inputNotesOnCount;
+        }
+
+        private enum ArpgEvent
+        {
+            None,
+            OtherNote,
+            Tremolo
+        }
+
+        private bool PutArpeggioNotes(byte noteNum, int noteOnCount)
+        {
+            ArpgEvent arpgEvent;
+
+
+            if (_lastOnNote == noteNum)
+            {
+                if (Setting.EnableTremolo && (noteOnCount == 1))
+                {
+                    arpgEvent = ArpgEvent.Tremolo;
+                }
+                else
+                {
+                    arpgEvent = ArpgEvent.None;
+                }
+            }
+            else
+            {
+                arpgEvent = ArpgEvent.OtherNote;
+            }
+
+            if (arpgEvent == ArpgEvent.OtherNote)
+            {   // 最後に出力した音と異なる音高
+                var arpgValue = CalcArpgTimeValue(Setting.ArpeggiatorInterval, Setting.NoteDelay, noteOnCount);
+                if ((_swLastNoteOn.ElapsedMilliseconds > arpgValue)
+                    && (_noteOffQueue.Count > 0))
+                {
+                    while (_noteOffQueue.Count > 0)
+                    {
+                        var oldNote = _noteOffQueue.Dequeue();
+                        Channel.Instance.Put(new NoteEvent(oldNote, false));
+                    }
+                }
+
+                if (_swLastNoteOn.ElapsedMilliseconds > arpgValue)
+                {
+                    Channel.Instance.Put(new NoteEvent(noteNum, true));
+                    _noteOffQueue.Enqueue(noteNum);
+                    _lastOnNote = noteNum;
+                    _swLastNoteOn.Restart();
+                    return true;
+                }
+                return false;
+            }
+            else if (arpgEvent == ArpgEvent.Tremolo)
+            {   // 最後に出力した音と同じ音高 & トレモロ有効
+                var tremoloValue = CalcTremoloTimeValue(Setting.ArpeggiatorInterval, Setting.NoteDelay);
+                if ((_swLastNoteOn.ElapsedMilliseconds > tremoloValue)
+                    && (_noteOffQueue.Count > 0))
+                {
+                    while (_noteOffQueue.Count > 0)
+                    {
+                        var oldNote = _noteOffQueue.Dequeue();
+                        Channel.Instance.Put(new NoteEvent(oldNote, false));
+                    }
+                }
+                if (_swLastNoteOn.ElapsedMilliseconds > (tremoloValue + Setting.NoteDelay))
+                {
+                    Channel.Instance.Put(new NoteEvent(noteNum, true));
+                    _noteOffQueue.Enqueue(noteNum);
+                    _lastOnNote = noteNum;
+                    _swLastNoteOn.Restart();
+                    return true;
+                }
+                return false;
+            }
+            else
+            {   // 最後に出力した音と同じ音高 & トレモロ無効
+                // do nothing
+                return true;
+            }
+        }
+
+        private static long CalcArpgTimeValue(long interval, long noteDelay, long count)
+        {
+            if (count < 2)
+            {
+                return CalcTremoloTimeValue(interval, noteDelay);
+            }
+            else
+            {
+                long tmp = (long)(interval / count);
+                return Math.Max(Math.Max(tmp, noteDelay), MinInterval);
+            }
+        }
+        private static long CalcTremoloTimeValue(long interval, long noteDelay)
+        {
+            return (Math.Max(interval, MinInterval) - noteDelay);
         }
     }
 }
