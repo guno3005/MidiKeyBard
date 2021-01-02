@@ -191,7 +191,7 @@
             this.gboxArpeggiator.Controls.Add(this.chbArpeggiatorEnable);
             this.gboxArpeggiator.Controls.Add(this.nudArpegDelay);
             this.gboxArpeggiator.Controls.Add(this.label5);
-            this.gboxArpeggiator.Location = new System.Drawing.Point(6, 118);
+            this.gboxArpeggiator.Location = new System.Drawing.Point(6, 135);
             this.gboxArpeggiator.Name = "gboxArpeggiator";
             this.gboxArpeggiator.Size = new System.Drawing.Size(260, 109);
             this.gboxArpeggiator.TabIndex = 6;
