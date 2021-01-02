@@ -41,6 +41,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.gboxKeyConfig = new System.Windows.Forms.GroupBox();
             this.gboxArpeggiator = new System.Windows.Forms.GroupBox();
+            this.chbTremoloEnable = new System.Windows.Forms.CheckBox();
             this.chbArpeggiatorEnable = new System.Windows.Forms.CheckBox();
             this.nudArpegDelay = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
@@ -50,7 +51,6 @@
             this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
             this.groupBoxMidiOut = new System.Windows.Forms.GroupBox();
             this.groupBoxNoteControl = new System.Windows.Forms.GroupBox();
-            this.chbTremoloEnable = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteOffVelocity)).BeginInit();
             this.gboxKeyConfig.SuspendLayout();
@@ -198,6 +198,17 @@
             this.gboxArpeggiator.TabStop = false;
             this.gboxArpeggiator.Text = "Arpeggiator";
             // 
+            // chbTremoloEnable
+            // 
+            this.chbTremoloEnable.AutoSize = true;
+            this.chbTremoloEnable.Enabled = false;
+            this.chbTremoloEnable.Location = new System.Drawing.Point(30, 46);
+            this.chbTremoloEnable.Name = "chbTremoloEnable";
+            this.chbTremoloEnable.Size = new System.Drawing.Size(103, 16);
+            this.chbTremoloEnable.TabIndex = 5;
+            this.chbTremoloEnable.Text = "Enable Tremolo";
+            this.chbTremoloEnable.UseVisualStyleBackColor = true;
+            // 
             // chbArpeggiatorEnable
             // 
             this.chbArpeggiatorEnable.AutoSize = true;
@@ -217,6 +228,11 @@
             0,
             0,
             0});
+            this.nudArpegDelay.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             this.nudArpegDelay.Name = "nudArpegDelay";
             this.nudArpegDelay.Size = new System.Drawing.Size(88, 19);
             this.nudArpegDelay.TabIndex = 4;
@@ -231,9 +247,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(13, 77);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(110, 12);
+            this.label5.Size = new System.Drawing.Size(116, 12);
             this.label5.TabIndex = 2;
-            this.label5.Text = "Interval [0-1000 ms]";
+            this.label5.Text = "Interval [50-1000 ms]";
             // 
             // gboxMidiIn
             // 
@@ -295,17 +311,6 @@
             this.groupBoxNoteControl.TabIndex = 9;
             this.groupBoxNoteControl.TabStop = false;
             this.groupBoxNoteControl.Text = "Note Control";
-            // 
-            // chbTremoloEnable
-            // 
-            this.chbTremoloEnable.AutoSize = true;
-            this.chbTremoloEnable.Enabled = false;
-            this.chbTremoloEnable.Location = new System.Drawing.Point(30, 46);
-            this.chbTremoloEnable.Name = "chbTremoloEnable";
-            this.chbTremoloEnable.Size = new System.Drawing.Size(103, 16);
-            this.chbTremoloEnable.TabIndex = 5;
-            this.chbTremoloEnable.Text = "Enable Tremolo";
-            this.chbTremoloEnable.UseVisualStyleBackColor = true;
             // 
             // OptionForm
             // 

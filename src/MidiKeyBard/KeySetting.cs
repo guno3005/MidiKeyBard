@@ -16,7 +16,7 @@ namespace MidiKeyBard
         public static int MidiInCount = 0;
         public static bool EnableArpeggiator = false;
         public static bool EnableTremolo = false;
-        public static int ArpeggiatorDelay = 50;
+        public static int ArpeggiatorInterval = 50;
         public static int MidiInCh = MidiInChAll;
         public const int MidiInChAll = -1;
         public static bool EnebleMidiOut = false;
@@ -34,7 +34,7 @@ namespace MidiKeyBard
                 ini.setValue(AppSetting.Section, AppSetting.ValueMidiOutCount, MidiOutCount);
                 ini.setValue(AppSetting.Section, AppSetting.ValueNoteDelay, NoteDelay);
                 ini.setValue(AppSetting.Section, AppSetting.ValueNoteOffThreshold, NoteOffThreshold);
-                ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorDelay, ArpeggiatorDelay);
+                ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorInterval, ArpeggiatorInterval);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorEnable, EnableArpeggiator);
                 ini.setValue(AppSetting.Section, AppSetting.TremoloEnable, EnableTremolo);
                 ini.setValue(AppSetting.Section, AppSetting.MidiInCh, MidiInCh);
@@ -83,7 +83,7 @@ namespace MidiKeyBard
                 MidiInCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiInCount);
                 EnableArpeggiator = ini.getValueBool(AppSetting.Section, AppSetting.ArpeggiatorEnable);
                 EnableTremolo = ini.getValueBool(AppSetting.Section, AppSetting.TremoloEnable);
-                ArpeggiatorDelay = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorDelay, 50);
+                ArpeggiatorInterval = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorInterval, 50);
                 MidiInCh = ini.getValueInt(AppSetting.Section, AppSetting.MidiInCh, MidiInChAll);
                 EnebleMidiOut = ini.getValueBool(AppSetting.Section, AppSetting.EnebleMidiOut);
                 SelectedMidiOutIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex);
@@ -103,7 +103,7 @@ namespace MidiKeyBard
             public const String ValueNoteOffThreshold = "NoteOffThreshold";
             public const String ValueSelectedMidiInIndex = "SelectedMidiInIndex";
             public const String ValueMidiInCount = "MidiInCount";
-            public const String ArpeggiatorDelay = "ArpeggiatorDelay";
+            public const String ArpeggiatorInterval = "ArpeggiatorInterval";
             public const String ArpeggiatorEnable = "ArpeggiatorEnable";
             public const String TremoloEnable = "TremoloEnable";
             public const String MidiInCh = "MidiInCh";

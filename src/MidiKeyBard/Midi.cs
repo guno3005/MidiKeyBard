@@ -35,7 +35,7 @@ namespace MidiKeyBard
             {
                 _outPort?.PutMIDIMessage(message);
                 MidiInReceived(message);
-            } 
+            }
         }
 
         public static List<string> EnumInput()

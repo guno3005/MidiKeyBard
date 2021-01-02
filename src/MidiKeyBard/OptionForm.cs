@@ -69,7 +69,7 @@ namespace MidiKeyBard
             nudNoteOffVelocity.Value = Setting.NoteOffThreshold;
             chbArpeggiatorEnable.Checked = Setting.EnableArpeggiator;
             chbTremoloEnable.Checked = Setting.EnableTremolo;
-            nudArpegDelay.Value = Setting.ArpeggiatorDelay;
+            nudArpegDelay.Value = Setting.ArpeggiatorInterval;
             comboMidiInCh.SelectedValue = Setting.MidiInCh;
             checkBoxEnableMidiOut.Checked = Setting.EnebleMidiOut;
 
@@ -87,7 +87,7 @@ namespace MidiKeyBard
             Setting.NoteOffThreshold = (int)nudNoteOffVelocity.Value;
             Setting.EnableArpeggiator = chbArpeggiatorEnable.Checked;
             Setting.EnableTremolo = chbTremoloEnable.Checked;
-            Setting.ArpeggiatorDelay = Math.Max((int)nudArpegDelay.Value, Setting.NoteDelay);
+            Setting.ArpeggiatorInterval = Math.Max((int)nudArpegDelay.Value, Setting.NoteDelay);
             Setting.MidiInCh = (int)comboMidiInCh.SelectedValue;
             Setting.EnebleMidiOut = checkBoxEnableMidiOut.Checked;
             Setting.SaveFile();
