@@ -15,32 +15,31 @@ namespace MidiKeyBard
 
         CMIDIIn _inPort;
         CMIDIOut _outPort;
-        System.Timers.Timer _recvTimer;
 
         public Midi()
         {
             CMIDIIOLib.SetLanguage(CMIDIIOLib.English);
             CMIDIIOLib.SetIsShowDetail(true);
-            _recvTimer = new System.Timers.Timer();
-            _recvTimer.Elapsed += _recvTimer_Elapsed;
-            _recvTimer.Interval = 1;
         }
 
-        void _recvTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        public void ReceiveMIDIMessage()
         {
-            byte[] message = _inPort.GetMIDIMessage();
+            if(_inPort == null)
+            {
+                return;
+            }
 
+            byte[] message = _inPort.GetMIDIMessage();
             var len = message.Length;
             if (len > 0)
             {
                 _outPort?.PutMIDIMessage(message);
-                inPort_Received(message);
-            } 
+                MidiInReceived(message);
+            }
         }
 
         public static List<string> EnumInput()
         {
-
             int count = CMIDIIn.GetDeviceNum();
             var list = new List<string>();
             for (int i = 0; i < count; i++)
@@ -52,24 +51,20 @@ namespace MidiKeyBard
 
         public void OpenInPort(string name)
         {
-            _recvTimer.Stop();
-
             _inPort = new CMIDIIn();
             try
             {
                 _inPort.Reopen(name);
-                _recvTimer.Start();
             }
             catch (Exception)
             {
                 //TODO:
                 throw;
             }
-            
         }
+
         public void CloseInPort()
         {
-
             if (_inPort == null)
             {
                 return;
@@ -77,7 +72,6 @@ namespace MidiKeyBard
 
             try
             {
-                _recvTimer.Stop();
                 _inPort.Close();
                 _inPort = null;
             }
@@ -86,12 +80,10 @@ namespace MidiKeyBard
                 //TODO:
                 throw;
             }
-
         }
 
-        public static void inPort_Received(byte[] message)
+        private static void MidiInReceived(byte[] message)
         {
-
             try
             {
                 if (message.Length < 2)
@@ -100,7 +92,7 @@ namespace MidiKeyBard
                 }
 
                 var ch = ByteToMidiCh(message[0]);
-                if ((Setting.MidiInCh != -1) && (Setting.MidiInCh != ch))
+                if ((Setting.MidiInCh != Setting.MidiInChAll) && (Setting.MidiInCh != ch))
                 {
                     return;
                 }
@@ -129,43 +121,43 @@ namespace MidiKeyBard
 
         private static void SubReceivedNoteOn(byte[] message)
         {
-            int velocity = GetMidiMessageVelocity(message,VelocityMax);
+            int velocity = GetMidiMessageVelocity(message, VelocityMax);
             if (velocity > Setting.NoteOffThreshold)
             {
-                PutNoteOn(message);
+                PutNoteOn(message[1]);
             }
             else
             {
-                PutNoteOff(message);
+                PutNoteOff(message[1]);
             }
         }
 
         private static void SubReceivedNoteOff(byte[] message)
         {
-            PutNoteOff(message);
+            PutNoteOff(message[1]);
         }
 
-        private static void PutNoteOn(byte[] message)
+        private static void PutNoteOn(byte noteNum)
         {
             if (Setting.EnableArpeggiator)
             {
-                Arpeggiator.Instance.PutOn(message[1]);
+                Arpeggiator.Instance.Put(new NoteEvent(noteNum, true));
             }
             else
             {
-                Channel.Instance.Put(new NoteEvent(message[1], true));
+                Channel.Instance.Put(new NoteEvent(noteNum, true));
             }
         }
         
-        private static void PutNoteOff(byte[] message)
+        private static void PutNoteOff(byte noteNum)
         {
             if (Setting.EnableArpeggiator)
             {
-                Arpeggiator.Instance.TakeOff(message[1]);
+                Arpeggiator.Instance.Put(new NoteEvent(noteNum, false));
             }
             else
             {
-                Channel.Instance.Put(new NoteEvent(message[1], false));
+                Channel.Instance.Put(new NoteEvent(noteNum, false));
             }
         }
 
@@ -173,7 +165,7 @@ namespace MidiKeyBard
         {
             int count = CMIDIOut.GetDeviceNum();
             var list = new List<string>();
-            for( int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 list.Add(CMIDIOut.GetDeviceName(i));
             }
@@ -226,13 +218,7 @@ namespace MidiKeyBard
             return velocity;
         }
 
-        private bool enableArpeggiator = false;
-        public void SetEnableArpeggiator(bool enable)
-        {
-            enableArpeggiator = enable;
-        }
-
-        enum MidiEventType
+        private enum MidiEventType
         {
             NOTE_ON = 0x90,
             NOTE_OFF = 0x80,

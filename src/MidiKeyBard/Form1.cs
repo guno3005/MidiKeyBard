@@ -14,19 +14,18 @@ namespace MidiKeyBard
 {
     public partial class Form1 : Form
     {
-        private static Midi _midi;
+        private static InOutControl _inOutControl;
 
         public Form1()
         {
             InitializeComponent();
             this.Text = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
-            _midi = new Midi();
-
+            _inOutControl = new InOutControl();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = Application.ProductName + "  " + Application.ProductVersion ;
+            this.Text = Application.ProductName + "  " + Application.ProductVersion;
             saveFileDialog1.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
             openFileDialog1.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
 
@@ -42,9 +41,7 @@ namespace MidiKeyBard
             ResetMidiOut();
             ResetMidiIn();
 
-
-            mainLoop();
-            Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
+            _inOutControl.StartMainLoop();
 
             UpdateDisplay();
         }
@@ -91,43 +88,8 @@ namespace MidiKeyBard
             else
             {
                 // disable MidiOut
-                _midi.CloseOutPort();
+                _inOutControl.CloseMidiOut();
             }
-        }
-
-        private void mainLoop()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                var sw = new System.Diagnostics.Stopwatch();
-                sw.Start();
-
-                while (true)
-                {
-                    var note = Channel.Instance.Get();
-                    var key = KeySetting.NoteToKeyCode(note.Note);
-                    if (key == 0)
-                    {
-                        continue;
-                    }
-
-                    if (Setting.NoteDelay > 0)
-                    {
-                        if (note.IsOn)
-                        {
-                            var elapse = sw.ElapsedMilliseconds;
-                            if (elapse < Setting.NoteDelay)
-                            {
-                                System.Threading.Thread.Sleep((int)(Setting.NoteDelay - elapse));
-                            }
-                            sw.Restart();
-                        }
-                    }
-                    Keyboard.SendKey(key, note.IsOn);
-                }
-
-
-            });
         }
 
         private void comboBoxMidiIn_SelectedIndexChanged(object sender, EventArgs e)
@@ -137,7 +99,7 @@ namespace MidiKeyBard
 
         private void ReopenSelectedMidiIn()
         {
-            _midi.CloseInPort();
+            _inOutControl.CloseMidiIn();
             var item = comboBoxMidiIn.SelectedItem.ToString();
             if (string.IsNullOrWhiteSpace(item))
             {
@@ -148,7 +110,7 @@ namespace MidiKeyBard
             labelStatus.Text = String.Empty;
             try
             {
-                _midi.OpenInPort(item);
+                _inOutControl.OpenMidiIn(item);
                 comboBoxMidiIn.BackColor = Color.Empty;
             }
             catch (Exception ex)
@@ -161,13 +123,6 @@ namespace MidiKeyBard
             }
             Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
 
-        }
-
-        // Midiデバイスの再取得ができないので断念…
-        private void btnReLoad_Click(object sender, EventArgs e)
-        {
-            _midi.CloseInPort();
-            ResetComboBox();
         }
 
         private void ResetComboBox()
@@ -186,10 +141,10 @@ namespace MidiKeyBard
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             //CloseMidis();
-            if (_midi != null)
+            if (_inOutControl != null)
             {
-                _midi.CloseInPort();
-                _midi.CloseOutPort();
+                _inOutControl.CloseMidiIn();
+                _inOutControl.CloseMidiOut();
             }
 
             Setting.SaveState();
@@ -197,18 +152,18 @@ namespace MidiKeyBard
 
         private void ShowOptionForm()
         {
-            if (_midi != null)
-            {
-                _midi.CloseInPort();
-                _midi.CloseOutPort();
-            }
+            _inOutControl.Stop();
+            
+            Arpeggiator.Instance.SetEnable(false);
             new OptionForm().ShowDialog();
+
             ResetMidiIn();
             ReopenSelectedMidiIn();
             ResetMidiOut();
             ReopenSelectedMidiOut();
             UpdateDisplay();
 
+            _inOutControl.StartMainLoop();
         }
 
         private void UpdateDisplay()
@@ -238,11 +193,11 @@ namespace MidiKeyBard
         {
             if (Setting.EnebleMidiOut == false)
             {
-                _midi.CloseOutPort();
+                _inOutControl.CloseMidiOut();
                 return;
             }
 
-            _midi.CloseOutPort();
+            _inOutControl.CloseMidiOut();
             var item = comboBoxMidiOut.SelectedItem.ToString();
             if (string.IsNullOrWhiteSpace(item))
             {
@@ -252,7 +207,7 @@ namespace MidiKeyBard
 
             try
             {
-                _midi.OpenOutPort(item);
+                _inOutControl.OpenMidiOut(item);
                 comboBoxMidiOut.BackColor = Color.Empty;
             }
             catch (Exception ex)
@@ -325,6 +280,7 @@ namespace MidiKeyBard
                 labelStatus.Text = "Error! : Failed to load file.\n" + ex.Message;
                 return;
             }
+            _inOutControl.Stop();
 
             if (KeySetting.LoadSettingFile() == false)
             {
@@ -332,20 +288,15 @@ namespace MidiKeyBard
                 KeySetting.SetKeyMap(map);
             }
             Setting.LoadSettingFile();
-            if (_midi != null)
-            {
-                _midi.CloseInPort();
-                _midi.CloseOutPort();
-            }
             ResetComboBox();
             ResetMidiIn();
             ReopenSelectedMidiIn();
             ResetMidiOut();
             ReopenSelectedMidiOut();
-
-            Arpeggiator.Instance.SetEnable(Setting.EnableArpeggiator);
-
             UpdateDisplay();
+
+            _inOutControl.StartMainLoop();
+
         }
     }
 }

@@ -15,8 +15,10 @@ namespace MidiKeyBard
         public static int SelectedMidiInIndex = 0;
         public static int MidiInCount = 0;
         public static bool EnableArpeggiator = false;
-        public static int ArpeggiatorDelay = 50;
-        public static int MidiInCh = 0;
+        public static bool EnableTremolo = false;
+        public static int ArpeggiatorInterval = 50;
+        public static int MidiInCh = MidiInChAll;
+        public const int MidiInChAll = -1;
         public static bool EnebleMidiOut = false;
         public static int SelectedMidiOutIndex = 0;
         public static int MidiOutCount = 0;
@@ -32,8 +34,9 @@ namespace MidiKeyBard
                 ini.setValue(AppSetting.Section, AppSetting.ValueMidiOutCount, MidiOutCount);
                 ini.setValue(AppSetting.Section, AppSetting.ValueNoteDelay, NoteDelay);
                 ini.setValue(AppSetting.Section, AppSetting.ValueNoteOffThreshold, NoteOffThreshold);
-                ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorDelay, ArpeggiatorDelay);
+                ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorInterval, ArpeggiatorInterval);
                 ini.setValue(AppSetting.Section, AppSetting.ArpeggiatorEnable, EnableArpeggiator);
+                ini.setValue(AppSetting.Section, AppSetting.TremoloEnable, EnableTremolo);
                 ini.setValue(AppSetting.Section, AppSetting.MidiInCh, MidiInCh);
                 ini.setValue(AppSetting.Section, AppSetting.EnebleMidiOut, EnebleMidiOut);
             }
@@ -79,8 +82,9 @@ namespace MidiKeyBard
                 SelectedMidiInIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiInIndex);
                 MidiInCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiInCount);
                 EnableArpeggiator = ini.getValueBool(AppSetting.Section, AppSetting.ArpeggiatorEnable);
-                ArpeggiatorDelay = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorDelay, 50);
-                MidiInCh = ini.getValueInt(AppSetting.Section, AppSetting.MidiInCh, 0);
+                EnableTremolo = ini.getValueBool(AppSetting.Section, AppSetting.TremoloEnable);
+                ArpeggiatorInterval = ini.getValueInt(AppSetting.Section, AppSetting.ArpeggiatorInterval, 50);
+                MidiInCh = ini.getValueInt(AppSetting.Section, AppSetting.MidiInCh, MidiInChAll);
                 EnebleMidiOut = ini.getValueBool(AppSetting.Section, AppSetting.EnebleMidiOut);
                 SelectedMidiOutIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex);
                 MidiOutCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiOutCount);
@@ -99,8 +103,9 @@ namespace MidiKeyBard
             public const String ValueNoteOffThreshold = "NoteOffThreshold";
             public const String ValueSelectedMidiInIndex = "SelectedMidiInIndex";
             public const String ValueMidiInCount = "MidiInCount";
-            public const String ArpeggiatorDelay = "ArpeggiatorDelay";
+            public const String ArpeggiatorInterval = "ArpeggiatorInterval";
             public const String ArpeggiatorEnable = "ArpeggiatorEnable";
+            public const String TremoloEnable = "TremoloEnable";
             public const String MidiInCh = "MidiInCh";
             public const String EnebleMidiOut = "EnebleMidiOut";
             public const String ValueSelectedMidiOutIndex = "SelectedMidiOutIndex";
@@ -123,7 +128,8 @@ namespace MidiKeyBard
 
         public static void SetKeyMap(short[] map)
         {
-            if(map.Length != NoteKeyMap.Length){
+            if(map.Length != NoteKeyMap.Length)
+            {
                 throw new FormatException();
             }
             for(int i=0; i<NoteKeyMap.Length; i++)
@@ -345,7 +351,9 @@ namespace MidiKeyBard
             var items = new List<TableItem>();
 
             var ini = new InifileUtils(path);
-            for(int i = 0; i < 100;i++)
+            var itemCount = ini.getValueInt(General.Section, General.ValueTableItemCount, KeySetting.KeyMapSize);
+
+            for (int i = 0; i < itemCount; i++)
             {
                 int note = ini.getValueInt(TableItem.Section(i), TableItem.ValueNoteNumber);
                 int code = ini.getValueInt(TableItem.Section(i), TableItem.ValueKeyCode);
@@ -366,15 +374,18 @@ namespace MidiKeyBard
         internal static short[] ToKeyMap(MidiKeyUtilityConfig config)
         {
             short[] keyMap = new short[KeySetting.KeyMapSize];
-            foreach (var i in config.TableItems)
+            foreach (var item in config.TableItems)
             {
-                var note = i.NoteNumber;
+                var note = item.NoteNumber;
                 if (note < 0 || keyMap.Length <= note)
                 {
                     Console.WriteLine("A note out of range.");
                     throw new ArgumentException(string.Format("A note out of range. note:{0}", note));
                 }
-                keyMap[i.NoteNumber] = (short)i.KeyCode;
+                if((item.KeyCode > 0)&&(item.KeyCode < 255))    //0と255は無効なKeyCode
+                {
+                    keyMap[item.NoteNumber] = (short)item.KeyCode;
+                }
             }
 
             return keyMap;
@@ -384,6 +395,7 @@ namespace MidiKeyBard
         {
             public const String Section = "General";
             public const String ValueMidiInDevice = "MidiInDevice";
+            public const String ValueTableItemCount = "TableItemCount";
         }
 
         private class TableItem

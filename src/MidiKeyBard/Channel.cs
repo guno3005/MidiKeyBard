@@ -27,14 +27,12 @@ namespace MidiKeyBard
 
         public NoteEvent Get()
         {
-            NoteEvent note;
-
-            while (_queue.Count == 0)
+            if (_queue.Count == 0)
             {
-                System.Threading.Thread.Sleep(1);
+                return null;
             }
 
-            if (_queue.TryDequeue(out note))
+            if (_queue.TryDequeue(out NoteEvent note))
             {
                 return note;
             }
@@ -44,5 +42,32 @@ namespace MidiKeyBard
                 throw new InvalidOperationException("NoteEvent Queue is empty.");
             }
         }
+
+        //public NoteEvent WaitforMessage()
+        //{
+        //    while (_queue.Count == 0)
+        //    {   // 受信するまで永久ループ
+        //        DebugLog.WriteLine("");
+        //        System.Threading.Thread.Sleep(1);   // CPU負荷軽減のため100回毎にSleep 1ms
+        //        for (var i = 0; i < 100; i++)
+        //    {
+        //            System.Threading.Thread.Sleep(0);
+        //            if (_queue.Count != 0)
+        //            {
+        //                break;
+        //            }
+        //        }
+        //    }
+
+        //    if (_queue.TryDequeue(out NoteEvent note))
+        //    {
+        //        return note;
+        //    }
+        //    else
+        //    {
+        //        //TODO:
+        //        throw new InvalidOperationException("NoteEvent Queue is empty.");
+        //    }
+        //}
     }
 }
