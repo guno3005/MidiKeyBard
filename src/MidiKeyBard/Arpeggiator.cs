@@ -109,11 +109,8 @@ namespace MidiKeyBard
             if (note.IsOn)
             {
                 // note ON
-                Channel.Instance.Put(note);
-                _swLastNoteOn.Restart();
                 _inputNotes[note.Note] = true;
-                _noteOffQueue.Enqueue(note.Note);
-                _lastOnNote = note.Note;
+                PutNoteOn(note);
             }
             else
             {
@@ -169,10 +166,7 @@ namespace MidiKeyBard
 
                 if (_swLastNoteOn.ElapsedMilliseconds > arpgValue)
                 {
-                    Channel.Instance.Put(new NoteEvent(noteNum, true));
-                    _noteOffQueue.Enqueue(noteNum);
-                    _lastOnNote = noteNum;
-                    _swLastNoteOn.Restart();
+                    PutNoteOn(new NoteEvent(noteNum, true));
                     return true;
                 }
                 return false;
@@ -191,10 +185,7 @@ namespace MidiKeyBard
                 }
                 if (_swLastNoteOn.ElapsedMilliseconds > (tremoloValue + Setting.NoteDelay))
                 {
-                    Channel.Instance.Put(new NoteEvent(noteNum, true));
-                    _noteOffQueue.Enqueue(noteNum);
-                    _lastOnNote = noteNum;
-                    _swLastNoteOn.Restart();
+                    PutNoteOn(new NoteEvent(noteNum, true));
                     return true;
                 }
                 return false;
@@ -204,6 +195,17 @@ namespace MidiKeyBard
                 // do nothing
                 return true;
             }
+        }
+
+        private void PutNoteOn(NoteEvent note)
+        {
+            Channel.Instance.Put(note);
+            if (_noteOffQueue.Contains(note.Note) == false) 
+            {
+                _noteOffQueue.Enqueue(note.Note); 
+            }
+            _lastOnNote = note.Note;
+            _swLastNoteOn.Restart();
         }
 
         private static long CalcArpgTimeValue(long interval, long noteDelay, long count)
