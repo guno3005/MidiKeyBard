@@ -64,7 +64,6 @@ namespace MidiKeyBard
 
         private void OptionForm_Load(object sender, EventArgs e)
         {
-            //Setting.NoteDelay
             nudNoteDelay.Value = Setting.NoteDelay;
             nudNoteOffVelocity.Value = Setting.NoteOffThreshold;
             chbArpeggiatorEnable.Checked = Setting.EnableArpeggiator;
@@ -72,6 +71,10 @@ namespace MidiKeyBard
             nudArpegDelay.Value = Setting.ArpeggiatorInterval;
             comboMidiInCh.SelectedValue = Setting.MidiInCh;
             checkBoxEnableMidiOut.Checked = Setting.EnebleMidiOut;
+            checkBoxEnableTarget.Checked = Setting.EnableTarget;
+            textBoxTarget.Text = Setting.TargetName;
+
+            SetComboboxPriority(Setting.Priority);
 
             KeySettingMap = KeySetting.GetKeyMap();
         }
@@ -90,6 +93,8 @@ namespace MidiKeyBard
             Setting.ArpeggiatorInterval = Math.Max((int)nudArpegDelay.Value, Setting.NoteDelay);
             Setting.MidiInCh = (int)comboMidiInCh.SelectedValue;
             Setting.EnebleMidiOut = checkBoxEnableMidiOut.Checked;
+            Setting.EnableTarget = checkBoxEnableTarget.Checked;
+            Setting.TargetName = textBoxTarget.Text;
             Setting.SaveFile();
 
             KeySetting.SetKeyMap(KeySettingMap);
@@ -146,5 +151,37 @@ namespace MidiKeyBard
         {
             chbTremoloEnable.Enabled = chbArpeggiatorEnable.Checked;
         }
+
+        private void checkBoxEnableTarget_CheckedChanged(object sender, EventArgs e)
+        {
+            textBoxTarget.Enabled = checkBoxEnableTarget.Checked;
+        }
+
+        private void SetComboboxPriority(ProcessPriority priority)
+        {
+            if(priority == ProcessPriority.Default)
+            {
+                groupBoxPriority.Visible = false;
+                return;
+            }
+            groupBoxPriority.Visible = true;
+
+            comboBoxPriority.Items.Add(ProcessPriority.RealTime.ToString());
+            comboBoxPriority.Items.Add(ProcessPriority.High.ToString());
+            comboBoxPriority.Items.Add(ProcessPriority.AboveNormal.ToString());
+            comboBoxPriority.Items.Add(ProcessPriority.Normal.ToString());
+
+            foreach (var item in comboBoxPriority.Items)
+            {
+                if(item.ToString() == priority.ToString())
+                {
+                    comboBoxPriority.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+
+
     }
 }

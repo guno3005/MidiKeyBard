@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -22,6 +23,11 @@ namespace MidiKeyBard
         public static bool EnebleMidiOut = false;
         public static int SelectedMidiOutIndex = 0;
         public static int MidiOutCount = 0;
+        public static bool EnableTarget = false;
+        public static IntPtr TargetHandle = IntPtr.Zero;
+        public static string TargetSelected = "";
+        public static string TargetName = "";
+        public static ProcessPriority Priority = 0;
 
         internal static void SaveFile()
         {
@@ -39,6 +45,9 @@ namespace MidiKeyBard
                 ini.setValue(AppSetting.Section, AppSetting.TremoloEnable, EnableTremolo);
                 ini.setValue(AppSetting.Section, AppSetting.MidiInCh, MidiInCh);
                 ini.setValue(AppSetting.Section, AppSetting.EnebleMidiOut, EnebleMidiOut);
+                ini.setValue(AppSetting.Section, AppSetting.EnebleTargettingProcess, EnableTarget);
+                ini.setValue(AppSetting.Section, AppSetting.TargetName, TargetName);
+                //ini.setValue(AppSetting.Section, AppSetting.Priority, (int)Priority); // read only
             }
             catch (Exception)
             {
@@ -88,11 +97,47 @@ namespace MidiKeyBard
                 EnebleMidiOut = ini.getValueBool(AppSetting.Section, AppSetting.EnebleMidiOut);
                 SelectedMidiOutIndex = ini.getValueInt(AppSetting.Section, AppSetting.ValueSelectedMidiOutIndex);
                 MidiOutCount = ini.getValueInt(AppSetting.Section, AppSetting.ValueMidiOutCount);
+                EnableTarget = ini.getValueBool(AppSetting.Section, AppSetting.EnebleTargettingProcess);
+                TargetName = ini.getValueString(AppSetting.Section, AppSetting.TargetName);
+                Priority = getValuePriority(ini.getValueInt(AppSetting.Section, AppSetting.Priority, (int)ProcessPriority.Default));
             }
             catch (Exception)
             {
                 //TODO:
                 throw;
+            }
+        }
+
+        private static ProcessPriority getValuePriority(int valInt)
+        {
+            switch (valInt)
+            {
+                case (int)ProcessPriority.RealTime:
+                    return ProcessPriority.RealTime;
+                case (int)ProcessPriority.High:
+                    return ProcessPriority.High;
+                case (int)ProcessPriority.AboveNormal:
+                    return ProcessPriority.AboveNormal;
+                case (int)ProcessPriority.Normal:
+                    return ProcessPriority.Normal;
+                default:
+                    return ProcessPriority.Default;
+            }
+        }
+
+        internal static ProcessPriorityClass GetPriorityClass()
+        {
+            switch(Priority){
+                case ProcessPriority.Normal:
+                    return System.Diagnostics.ProcessPriorityClass.Normal;
+                case ProcessPriority.AboveNormal:
+                    return System.Diagnostics.ProcessPriorityClass.AboveNormal;
+                case ProcessPriority.High:
+                    return System.Diagnostics.ProcessPriorityClass.High;
+                case ProcessPriority.RealTime:
+                    return System.Diagnostics.ProcessPriorityClass.RealTime;
+                default:
+                    return System.Diagnostics.ProcessPriorityClass.High;
             }
         }
 
@@ -110,6 +155,9 @@ namespace MidiKeyBard
             public const String EnebleMidiOut = "EnebleMidiOut";
             public const String ValueSelectedMidiOutIndex = "SelectedMidiOutIndex";
             public const String ValueMidiOutCount = "MidiOutCount";
+            public const String EnebleTargettingProcess = "EnebleTargettingProcess";
+            public const String TargetName = "TargetName";
+            public const String Priority = "Priority";
         }
     }
 
@@ -423,4 +471,16 @@ namespace MidiKeyBard
         }
 
     }
+
+    public enum ProcessPriority
+    {
+        //Idle = -2,
+        //BelowNormal = -1,
+        Default = -1,
+        Normal = 0,
+        AboveNormal = 1,
+        High = 2,
+        RealTime = 3,
+    }
+
 }

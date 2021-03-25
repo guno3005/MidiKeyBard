@@ -15,6 +15,7 @@ namespace MidiKeyBard
     public partial class Form1 : Form
     {
         private static InOutControl _inOutControl;
+        private List<System.Diagnostics.Process> _processList = null;
 
         public Form1()
         {
@@ -37,12 +38,19 @@ namespace MidiKeyBard
             }
             Setting.LoadSettingFile();
 
+            System.Diagnostics.Process.GetCurrentProcess().PriorityClass = Setting.GetPriorityClass();
+
             ResetComboBox();
             ResetMidiOut();
             ResetMidiIn();
 
             _inOutControl.StartMainLoop();
 
+            if (Setting.EnableTarget)
+            {
+                _processList = ProcessCatcher.GetWindowProcess();
+                ResetComboTargetWindow(_processList, Setting.TargetName, Setting.TargetSelected);
+            }
             UpdateDisplay();
         }
 
@@ -163,25 +171,19 @@ namespace MidiKeyBard
             ReopenSelectedMidiOut();
             UpdateDisplay();
 
+            if(Setting.EnableTarget)
+            {
+                _processList = ProcessCatcher.GetWindowProcess();
+                ResetComboTargetWindow(_processList, Setting.TargetName, Setting.TargetSelected);
+            }
+
             _inOutControl.StartMainLoop();
         }
 
         private void UpdateDisplay()
         {
-            if (Setting.EnebleMidiOut)
-            {
-                labelMidiOut.Visible = true;
-                comboBoxMidiOut.Visible = true;
-                this.Size = new Size(369,170);
-                labelStatus.Location = new Point(8, 92);
-            }
-            else
-            {
-                labelMidiOut.Visible = false;
-                comboBoxMidiOut.Visible = false;
-                this.Size = new Size(369,145);
-                labelStatus.Location = new Point(8, 67);
-            }
+            panelMidiOut.Visible = Setting.EnebleMidiOut;
+            panelTarget.Visible = Setting.EnableTarget;
         }
 
         private void comboBoxMidiOut_SelectedIndexChanged(object sender, EventArgs e)
@@ -229,6 +231,12 @@ namespace MidiKeyBard
         }
 
         private void comboBoxMidiOut_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //当アプリにフォーカスがある場合のMIDI入力で
+            //うっかりデバイスが変更されないように、ComboBoxへのキー入力を無効化
+            e.Handled = true;
+        }
+        private void comboBoxTargetWindow_KeyPress(object sender, KeyPressEventArgs e)
         {
             //当アプリにフォーカスがある場合のMIDI入力で
             //うっかりデバイスが変更されないように、ComboBoxへのキー入力を無効化
@@ -298,5 +306,70 @@ namespace MidiKeyBard
             _inOutControl.StartMainLoop();
 
         }
+
+        private void comboBoxTargetWindow_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            IntPtr _SelectedHandle = IntPtr.Zero;
+            string _SelectedProcessName = "";
+            var item = comboBoxTargetWindow.SelectedItem;
+            if (item.GetType() == typeof(ProcessItem))
+            {
+                var process = ((ProcessItem)item).Process;
+                if (process != null)
+                {
+                    _SelectedHandle = process.MainWindowHandle;
+                    _SelectedProcessName = process.ProcessName;
+                    //return;
+                }
+
+            }
+            //_SelectedHandle = IntPtr.Zero;
+            //_SelectedProcessName = "";
+
+            Setting.TargetHandle = _SelectedHandle;
+            Setting.TargetSelected = _SelectedProcessName;
+
+            return;
+        }
+
+        private void buttonRefreshProcessList_Click(object sender, EventArgs e)
+        {
+            _processList = ProcessCatcher.GetWindowProcess();
+            ResetComboTargetWindow(_processList, Setting.TargetName, Setting.TargetSelected);
+        }
+
+        private void ResetComboTargetWindow(List<System.Diagnostics.Process> processList, string targetName, string selectedName)
+        {
+            //const string AppNameFF14 = "ffxiv";
+            int selectedIndex = 0;
+            bool showsAll = String.IsNullOrWhiteSpace(targetName);
+            comboBoxTargetWindow.Items.Clear();
+            comboBoxTargetWindow.Items.Add(new ProcessItem(null));
+            foreach (var p in processList)
+            {
+                if ((showsAll == false) && (p.ProcessName.ToUpper().Contains(targetName.ToUpper()) == false))
+                {
+                    continue;
+                }
+                int countSameName = comboBoxTargetWindow.Items.Cast<ProcessItem>().Where((item) => {
+                    if(item.Process == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return (item.Process.MainWindowTitle) == (p.MainWindowTitle);
+                    }
+                }).Count();
+                comboBoxTargetWindow.Items.Add(new ProcessItem(p, countSameName));
+                if ((p.ProcessName == selectedName) && (selectedIndex == 0))
+                {
+                    selectedIndex = comboBoxTargetWindow.Items.Count - 1;
+                }
+            }
+
+            comboBoxTargetWindow.SelectedIndex = selectedIndex;
+        }
+
     }
 }

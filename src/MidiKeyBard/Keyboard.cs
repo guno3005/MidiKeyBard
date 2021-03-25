@@ -66,6 +66,11 @@ namespace MidiKeyBard
         [DllImport("user32.dll", EntryPoint = "MapVirtualKeyA")]
         private extern static int MapVirtualKey(int wCode, int wMapType);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint wMsg, UIntPtr wParam, IntPtr lParam);
+        private const int WM_KEYDOWN = 0x100;
+        private const int WM_KEYUP = 0x101;
+
         private const int INPUT_MOUSE = 0;                  // マウスイベント
         private const int INPUT_KEYBOARD = 1;               // キーボードイベント
         private const int INPUT_HARDWARE = 2;               // ハードウェアイベント
@@ -88,7 +93,19 @@ namespace MidiKeyBard
         private const int VK_CONTROL = 0x11;                // CTRLキー
         private const int VK_MENU = 0x12;                   // ALTキー
 
-        public static void SendKey( short key, bool isDown)
+        public static void SendKey(IntPtr hWnd, short key, bool isDown)
+        {
+            if (hWnd == IntPtr.Zero)
+            {
+                SendKey(key, isDown);
+            }
+            else
+            {
+                SendKeyToHandle(hWnd, key, isDown);
+            }
+        }
+
+        private static void SendKey(short key, bool isDown)
         {
             const int num = 1;
             int key_event;
@@ -110,7 +127,22 @@ namespace MidiKeyBard
             inp.ki.dwExtraInfo = 0;
             inp.ki.time = 0;
 
-            SendInput( num, ref inp, Marshal.SizeOf(inp));
+            SendInput(num, ref inp, Marshal.SizeOf(inp));
+        }
+
+        private static void SendKeyToHandle(IntPtr hWnd, short key, bool isDown)
+        {
+            int key_event;
+            if (isDown)
+            {
+                key_event = WM_KEYDOWN;
+            }
+            else
+            {
+                key_event = WM_KEYUP;
+            }
+
+            SendMessage(hWnd, (UInt32)key_event, (UIntPtr)key, (IntPtr)0);
         }
 
     }

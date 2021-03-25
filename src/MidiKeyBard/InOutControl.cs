@@ -80,7 +80,7 @@ namespace MidiKeyBard
                                 }
                                 else
                                 {   // OFF のKeyは直ちに出力する
-                                    Keyboard.SendKey(inputKey, inputNote.IsOn);
+                                    Keyboard.SendKey(Setting.TargetHandle, inputKey, inputNote.IsOn);
                                     inputKey = 0;
                                 }
                             }
