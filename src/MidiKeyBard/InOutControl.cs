@@ -100,6 +100,14 @@ namespace MidiKeyBard
             });
         }
 
+        public void StartMainLoopIfStopped()
+        {
+            if (!_isRunning)
+            {
+                StartMainLoop();
+            }
+        }
+
         internal void CloseMidiOut()
         {
             _midi.CloseOutPort();

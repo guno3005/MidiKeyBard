@@ -129,6 +129,11 @@ namespace MidiKeyBard
                 var exLines = ex.Message.Split(new[] { '\n' });
                 labelStatus.Text = "Error! : " + exLines[0];
                 comboBoxMidiIn.BackColor = Color.Red;
+
+                // MidiInのOpenに失敗した場合、MidiInPortはNullにならずMainLoopで例外が発生し
+                // MainLoopが終了してしまう場合がある。なので必要ならMainLoop再開
+                _inOutControl.CloseMidiIn();
+                _inOutControl.StartMainLoopIfStopped();
             }
             Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
 
