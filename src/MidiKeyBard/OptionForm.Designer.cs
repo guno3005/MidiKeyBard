@@ -30,35 +30,41 @@
         {
             this.nudNoteDelay = new System.Windows.Forms.NumericUpDown();
             this.nudNoteOffVelocity = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelNoteDelay = new System.Windows.Forms.Label();
+            this.labelNoteOffVel = new System.Windows.Forms.Label();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.btnImport = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnPresetA = new System.Windows.Forms.Button();
-            this.btnPresetB = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.gboxKeyConfig = new System.Windows.Forms.GroupBox();
             this.gboxArpeggiator = new System.Windows.Forms.GroupBox();
             this.chbTremoloEnable = new System.Windows.Forms.CheckBox();
             this.chbArpeggiatorEnable = new System.Windows.Forms.CheckBox();
             this.nudArpegDelay = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labelArpgInterval = new System.Windows.Forms.Label();
+            this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
+            this.groupBoxMidiOut = new System.Windows.Forms.GroupBox();
+            this.textBoxTarget = new System.Windows.Forms.TextBox();
+            this.checkBoxEnableTarget = new System.Windows.Forms.CheckBox();
+            this.labelTarget = new System.Windows.Forms.Label();
+            this.groupBoxNoteControl = new System.Windows.Forms.GroupBox();
+            this.groupBoxPriority = new System.Windows.Forms.GroupBox();
+            this.comboBoxPriority = new System.Windows.Forms.ComboBox();
             this.gboxMidiIn = new System.Windows.Forms.GroupBox();
             this.lblMidiInCh = new System.Windows.Forms.Label();
             this.comboMidiInCh = new System.Windows.Forms.ComboBox();
-            this.checkBoxEnableMidiOut = new System.Windows.Forms.CheckBox();
-            this.groupBoxMidiOut = new System.Windows.Forms.GroupBox();
-            this.groupBoxNoteControl = new System.Windows.Forms.GroupBox();
+            this.gboxKeyConfig = new System.Windows.Forms.GroupBox();
+            this.labelImport = new System.Windows.Forms.Label();
+            this.btnPresetB = new System.Windows.Forms.Button();
+            this.labelLoadPreset = new System.Windows.Forms.Label();
+            this.btnPresetA = new System.Windows.Forms.Button();
+            this.btnImport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteOffVelocity)).BeginInit();
-            this.gboxKeyConfig.SuspendLayout();
             this.gboxArpeggiator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudArpegDelay)).BeginInit();
-            this.gboxMidiIn.SuspendLayout();
             this.groupBoxMidiOut.SuspendLayout();
             this.groupBoxNoteControl.SuspendLayout();
+            this.groupBoxPriority.SuspendLayout();
+            this.gboxMidiIn.SuspendLayout();
+            this.gboxKeyConfig.SuspendLayout();
             this.SuspendLayout();
             // 
             // nudNoteDelay
@@ -85,27 +91,27 @@
             this.nudNoteOffVelocity.Size = new System.Drawing.Size(88, 19);
             this.nudNoteOffVelocity.TabIndex = 1;
             // 
-            // label1
+            // labelNoteDelay
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(129, 12);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Note Delay [0-1000 ms]";
+            this.labelNoteDelay.AutoSize = true;
+            this.labelNoteDelay.Location = new System.Drawing.Point(6, 22);
+            this.labelNoteDelay.Name = "labelNoteDelay";
+            this.labelNoteDelay.Size = new System.Drawing.Size(129, 12);
+            this.labelNoteDelay.TabIndex = 2;
+            this.labelNoteDelay.Text = "Note Delay [0-1000 ms]";
             // 
-            // label2
+            // labelNoteOffVel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 56);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(137, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Note Off Velocity [0-127]";
+            this.labelNoteOffVel.AutoSize = true;
+            this.labelNoteOffVel.Location = new System.Drawing.Point(6, 56);
+            this.labelNoteOffVel.Name = "labelNoteOffVel";
+            this.labelNoteOffVel.Size = new System.Drawing.Size(137, 12);
+            this.labelNoteOffVel.TabIndex = 3;
+            this.labelNoteOffVel.Text = "Note Off Velocity [0-127]";
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(376, 248);
+            this.btnOK.Location = new System.Drawing.Point(371, 295);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 4;
@@ -115,7 +121,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(457, 248);
+            this.btnCancel.Location = new System.Drawing.Point(464, 295);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 4;
@@ -123,75 +129,13 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnImport
-            // 
-            this.btnImport.Location = new System.Drawing.Point(179, 56);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(75, 23);
-            this.btnImport.TabIndex = 5;
-            this.btnImport.Text = "Import";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 61);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(163, 12);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Import MidiKeyUtility Config.ini";
-            // 
-            // btnPresetA
-            // 
-            this.btnPresetA.Location = new System.Drawing.Point(101, 18);
-            this.btnPresetA.Name = "btnPresetA";
-            this.btnPresetA.Size = new System.Drawing.Size(75, 23);
-            this.btnPresetA.TabIndex = 5;
-            this.btnPresetA.Text = "Preset A";
-            this.btnPresetA.UseVisualStyleBackColor = true;
-            this.btnPresetA.Click += new System.EventHandler(this.btnPresetA_Click);
-            // 
-            // btnPresetB
-            // 
-            this.btnPresetB.Location = new System.Drawing.Point(179, 18);
-            this.btnPresetB.Name = "btnPresetB";
-            this.btnPresetB.Size = new System.Drawing.Size(75, 23);
-            this.btnPresetB.TabIndex = 5;
-            this.btnPresetB.Text = "Preset B";
-            this.btnPresetB.UseVisualStyleBackColor = true;
-            this.btnPresetB.Click += new System.EventHandler(this.btnPresetB_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 23);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(66, 12);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Load Preset";
-            // 
-            // gboxKeyConfig
-            // 
-            this.gboxKeyConfig.Controls.Add(this.label3);
-            this.gboxKeyConfig.Controls.Add(this.btnPresetB);
-            this.gboxKeyConfig.Controls.Add(this.label4);
-            this.gboxKeyConfig.Controls.Add(this.btnPresetA);
-            this.gboxKeyConfig.Controls.Add(this.btnImport);
-            this.gboxKeyConfig.Location = new System.Drawing.Point(278, 154);
-            this.gboxKeyConfig.Name = "gboxKeyConfig";
-            this.gboxKeyConfig.Size = new System.Drawing.Size(260, 90);
-            this.gboxKeyConfig.TabIndex = 6;
-            this.gboxKeyConfig.TabStop = false;
-            this.gboxKeyConfig.Text = "Key Config";
-            // 
             // gboxArpeggiator
             // 
             this.gboxArpeggiator.Controls.Add(this.chbTremoloEnable);
             this.gboxArpeggiator.Controls.Add(this.chbArpeggiatorEnable);
             this.gboxArpeggiator.Controls.Add(this.nudArpegDelay);
-            this.gboxArpeggiator.Controls.Add(this.label5);
-            this.gboxArpeggiator.Location = new System.Drawing.Point(6, 135);
+            this.gboxArpeggiator.Controls.Add(this.labelArpgInterval);
+            this.gboxArpeggiator.Location = new System.Drawing.Point(6, 118);
             this.gboxArpeggiator.Name = "gboxArpeggiator";
             this.gboxArpeggiator.Size = new System.Drawing.Size(260, 109);
             this.gboxArpeggiator.TabIndex = 6;
@@ -242,23 +186,111 @@
             0,
             0});
             // 
-            // label5
+            // labelArpgInterval
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(13, 77);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(116, 12);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Interval [50-1000 ms]";
+            this.labelArpgInterval.AutoSize = true;
+            this.labelArpgInterval.Location = new System.Drawing.Point(13, 77);
+            this.labelArpgInterval.Name = "labelArpgInterval";
+            this.labelArpgInterval.Size = new System.Drawing.Size(116, 12);
+            this.labelArpgInterval.TabIndex = 2;
+            this.labelArpgInterval.Text = "Interval [50-1000 ms]";
+            // 
+            // checkBoxEnableMidiOut
+            // 
+            this.checkBoxEnableMidiOut.AutoSize = true;
+            this.checkBoxEnableMidiOut.Location = new System.Drawing.Point(15, 24);
+            this.checkBoxEnableMidiOut.Name = "checkBoxEnableMidiOut";
+            this.checkBoxEnableMidiOut.Size = new System.Drawing.Size(112, 16);
+            this.checkBoxEnableMidiOut.TabIndex = 6;
+            this.checkBoxEnableMidiOut.Text = "Enable MIDI OUT";
+            this.checkBoxEnableMidiOut.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxMidiOut
+            // 
+            this.groupBoxMidiOut.Controls.Add(this.textBoxTarget);
+            this.groupBoxMidiOut.Controls.Add(this.checkBoxEnableTarget);
+            this.groupBoxMidiOut.Controls.Add(this.checkBoxEnableMidiOut);
+            this.groupBoxMidiOut.Controls.Add(this.labelTarget);
+            this.groupBoxMidiOut.Location = new System.Drawing.Point(279, 88);
+            this.groupBoxMidiOut.Name = "groupBoxMidiOut";
+            this.groupBoxMidiOut.Size = new System.Drawing.Size(260, 95);
+            this.groupBoxMidiOut.TabIndex = 8;
+            this.groupBoxMidiOut.TabStop = false;
+            this.groupBoxMidiOut.Text = "Output";
+            // 
+            // textBoxTarget
+            // 
+            this.textBoxTarget.Enabled = false;
+            this.textBoxTarget.Location = new System.Drawing.Point(118, 68);
+            this.textBoxTarget.Name = "textBoxTarget";
+            this.textBoxTarget.Size = new System.Drawing.Size(136, 19);
+            this.textBoxTarget.TabIndex = 7;
+            this.textBoxTarget.Text = "ffxiv";
+            // 
+            // checkBoxEnableTarget
+            // 
+            this.checkBoxEnableTarget.AutoSize = true;
+            this.checkBoxEnableTarget.Location = new System.Drawing.Point(15, 46);
+            this.checkBoxEnableTarget.Name = "checkBoxEnableTarget";
+            this.checkBoxEnableTarget.Size = new System.Drawing.Size(155, 16);
+            this.checkBoxEnableTarget.TabIndex = 6;
+            this.checkBoxEnableTarget.Text = "Enable Targeting Process";
+            this.checkBoxEnableTarget.UseVisualStyleBackColor = true;
+            this.checkBoxEnableTarget.CheckedChanged += new System.EventHandler(this.checkBoxEnableTarget_CheckedChanged);
+            // 
+            // labelTarget
+            // 
+            this.labelTarget.AutoSize = true;
+            this.labelTarget.Location = new System.Drawing.Point(33, 71);
+            this.labelTarget.Name = "labelTarget";
+            this.labelTarget.Size = new System.Drawing.Size(79, 12);
+            this.labelTarget.TabIndex = 2;
+            this.labelTarget.Text = "Process Name";
+            // 
+            // groupBoxNoteControl
+            // 
+            this.groupBoxNoteControl.Controls.Add(this.labelNoteDelay);
+            this.groupBoxNoteControl.Controls.Add(this.nudNoteDelay);
+            this.groupBoxNoteControl.Controls.Add(this.nudNoteOffVelocity);
+            this.groupBoxNoteControl.Controls.Add(this.labelNoteOffVel);
+            this.groupBoxNoteControl.Location = new System.Drawing.Point(6, 22);
+            this.groupBoxNoteControl.Name = "groupBoxNoteControl";
+            this.groupBoxNoteControl.Size = new System.Drawing.Size(260, 90);
+            this.groupBoxNoteControl.TabIndex = 9;
+            this.groupBoxNoteControl.TabStop = false;
+            this.groupBoxNoteControl.Text = "Note Control";
+            // 
+            // groupBoxPriority
+            // 
+            this.groupBoxPriority.Controls.Add(this.comboBoxPriority);
+            this.groupBoxPriority.Location = new System.Drawing.Point(6, 233);
+            this.groupBoxPriority.Name = "groupBoxPriority";
+            this.groupBoxPriority.Size = new System.Drawing.Size(260, 46);
+            this.groupBoxPriority.TabIndex = 8;
+            this.groupBoxPriority.TabStop = false;
+            this.groupBoxPriority.Text = "Process Priority";
+            this.groupBoxPriority.Visible = false;
+            // 
+            // comboBoxPriority
+            // 
+            this.comboBoxPriority.BackColor = System.Drawing.SystemColors.Window;
+            this.comboBoxPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxPriority.Enabled = false;
+            this.comboBoxPriority.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxPriority.FormattingEnabled = true;
+            this.comboBoxPriority.Location = new System.Drawing.Point(85, 18);
+            this.comboBoxPriority.Name = "comboBoxPriority";
+            this.comboBoxPriority.Size = new System.Drawing.Size(169, 20);
+            this.comboBoxPriority.TabIndex = 12;
             // 
             // gboxMidiIn
             // 
             this.gboxMidiIn.Controls.Add(this.lblMidiInCh);
             this.gboxMidiIn.Controls.Add(this.comboMidiInCh);
-            this.gboxMidiIn.Location = new System.Drawing.Point(278, 22);
+            this.gboxMidiIn.Location = new System.Drawing.Point(279, 22);
             this.gboxMidiIn.Name = "gboxMidiIn";
             this.gboxMidiIn.Size = new System.Drawing.Size(260, 60);
-            this.gboxMidiIn.TabIndex = 7;
+            this.gboxMidiIn.TabIndex = 10;
             this.gboxMidiIn.TabStop = false;
             this.gboxMidiIn.Text = "MIDI In";
             // 
@@ -279,52 +311,82 @@
             this.comboMidiInCh.Size = new System.Drawing.Size(87, 20);
             this.comboMidiInCh.TabIndex = 0;
             // 
-            // checkBoxEnableMidiOut
+            // gboxKeyConfig
             // 
-            this.checkBoxEnableMidiOut.AutoSize = true;
-            this.checkBoxEnableMidiOut.Location = new System.Drawing.Point(15, 24);
-            this.checkBoxEnableMidiOut.Name = "checkBoxEnableMidiOut";
-            this.checkBoxEnableMidiOut.Size = new System.Drawing.Size(112, 16);
-            this.checkBoxEnableMidiOut.TabIndex = 6;
-            this.checkBoxEnableMidiOut.Text = "Enable MIDI OUT";
-            this.checkBoxEnableMidiOut.UseVisualStyleBackColor = true;
+            this.gboxKeyConfig.Controls.Add(this.labelImport);
+            this.gboxKeyConfig.Controls.Add(this.btnPresetB);
+            this.gboxKeyConfig.Controls.Add(this.labelLoadPreset);
+            this.gboxKeyConfig.Controls.Add(this.btnPresetA);
+            this.gboxKeyConfig.Controls.Add(this.btnImport);
+            this.gboxKeyConfig.Location = new System.Drawing.Point(279, 189);
+            this.gboxKeyConfig.Name = "gboxKeyConfig";
+            this.gboxKeyConfig.Size = new System.Drawing.Size(260, 90);
+            this.gboxKeyConfig.TabIndex = 11;
+            this.gboxKeyConfig.TabStop = false;
+            this.gboxKeyConfig.Text = "Key Config";
             // 
-            // groupBoxMidiOut
+            // labelImport
             // 
-            this.groupBoxMidiOut.Controls.Add(this.checkBoxEnableMidiOut);
-            this.groupBoxMidiOut.Location = new System.Drawing.Point(278, 88);
-            this.groupBoxMidiOut.Name = "groupBoxMidiOut";
-            this.groupBoxMidiOut.Size = new System.Drawing.Size(260, 60);
-            this.groupBoxMidiOut.TabIndex = 8;
-            this.groupBoxMidiOut.TabStop = false;
-            this.groupBoxMidiOut.Text = "MIDI Out";
+            this.labelImport.AutoSize = true;
+            this.labelImport.Location = new System.Drawing.Point(13, 61);
+            this.labelImport.Name = "labelImport";
+            this.labelImport.Size = new System.Drawing.Size(163, 12);
+            this.labelImport.TabIndex = 3;
+            this.labelImport.Text = "Import MidiKeyUtility Config.ini";
             // 
-            // groupBoxNoteControl
+            // btnPresetB
             // 
-            this.groupBoxNoteControl.Controls.Add(this.label1);
-            this.groupBoxNoteControl.Controls.Add(this.nudNoteDelay);
-            this.groupBoxNoteControl.Controls.Add(this.nudNoteOffVelocity);
-            this.groupBoxNoteControl.Controls.Add(this.label2);
-            this.groupBoxNoteControl.Location = new System.Drawing.Point(6, 22);
-            this.groupBoxNoteControl.Name = "groupBoxNoteControl";
-            this.groupBoxNoteControl.Size = new System.Drawing.Size(260, 90);
-            this.groupBoxNoteControl.TabIndex = 9;
-            this.groupBoxNoteControl.TabStop = false;
-            this.groupBoxNoteControl.Text = "Note Control";
+            this.btnPresetB.Location = new System.Drawing.Point(179, 18);
+            this.btnPresetB.Name = "btnPresetB";
+            this.btnPresetB.Size = new System.Drawing.Size(75, 23);
+            this.btnPresetB.TabIndex = 5;
+            this.btnPresetB.Text = "Preset B";
+            this.btnPresetB.UseVisualStyleBackColor = true;
+            this.btnPresetB.Click += new System.EventHandler(this.btnPresetB_Click);
+            // 
+            // labelLoadPreset
+            // 
+            this.labelLoadPreset.AutoSize = true;
+            this.labelLoadPreset.Location = new System.Drawing.Point(13, 23);
+            this.labelLoadPreset.Name = "labelLoadPreset";
+            this.labelLoadPreset.Size = new System.Drawing.Size(66, 12);
+            this.labelLoadPreset.TabIndex = 3;
+            this.labelLoadPreset.Text = "Load Preset";
+            // 
+            // btnPresetA
+            // 
+            this.btnPresetA.Location = new System.Drawing.Point(101, 18);
+            this.btnPresetA.Name = "btnPresetA";
+            this.btnPresetA.Size = new System.Drawing.Size(75, 23);
+            this.btnPresetA.TabIndex = 5;
+            this.btnPresetA.Text = "Preset A";
+            this.btnPresetA.UseVisualStyleBackColor = true;
+            this.btnPresetA.Click += new System.EventHandler(this.btnPresetA_Click);
+            // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(179, 56);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(75, 23);
+            this.btnImport.TabIndex = 5;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // OptionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(552, 285);
-            this.Controls.Add(this.groupBoxNoteControl);
-            this.Controls.Add(this.groupBoxMidiOut);
-            this.Controls.Add(this.gboxMidiIn);
-            this.Controls.Add(this.gboxArpeggiator);
+            this.ClientSize = new System.Drawing.Size(547, 326);
             this.Controls.Add(this.gboxKeyConfig);
+            this.Controls.Add(this.gboxMidiIn);
+            this.Controls.Add(this.groupBoxNoteControl);
+            this.Controls.Add(this.groupBoxPriority);
+            this.Controls.Add(this.groupBoxMidiOut);
+            this.Controls.Add(this.gboxArpeggiator);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "OptionForm";
@@ -334,17 +396,18 @@
             this.Load += new System.EventHandler(this.OptionForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNoteOffVelocity)).EndInit();
-            this.gboxKeyConfig.ResumeLayout(false);
-            this.gboxKeyConfig.PerformLayout();
             this.gboxArpeggiator.ResumeLayout(false);
             this.gboxArpeggiator.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudArpegDelay)).EndInit();
-            this.gboxMidiIn.ResumeLayout(false);
-            this.gboxMidiIn.PerformLayout();
             this.groupBoxMidiOut.ResumeLayout(false);
             this.groupBoxMidiOut.PerformLayout();
             this.groupBoxNoteControl.ResumeLayout(false);
             this.groupBoxNoteControl.PerformLayout();
+            this.groupBoxPriority.ResumeLayout(false);
+            this.gboxMidiIn.ResumeLayout(false);
+            this.gboxMidiIn.PerformLayout();
+            this.gboxKeyConfig.ResumeLayout(false);
+            this.gboxKeyConfig.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -353,26 +416,31 @@
 
         private System.Windows.Forms.NumericUpDown nudNoteDelay;
         private System.Windows.Forms.NumericUpDown nudNoteOffVelocity;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelNoteDelay;
+        private System.Windows.Forms.Label labelNoteOffVel;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnImport;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnPresetA;
-        private System.Windows.Forms.Button btnPresetB;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.GroupBox gboxKeyConfig;
         private System.Windows.Forms.GroupBox gboxArpeggiator;
         private System.Windows.Forms.CheckBox chbArpeggiatorEnable;
         private System.Windows.Forms.NumericUpDown nudArpegDelay;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.GroupBox gboxMidiIn;
-        private System.Windows.Forms.Label lblMidiInCh;
-        private System.Windows.Forms.ComboBox comboMidiInCh;
+        private System.Windows.Forms.Label labelArpgInterval;
         private System.Windows.Forms.CheckBox checkBoxEnableMidiOut;
         private System.Windows.Forms.GroupBox groupBoxMidiOut;
         private System.Windows.Forms.GroupBox groupBoxNoteControl;
         private System.Windows.Forms.CheckBox chbTremoloEnable;
+        private System.Windows.Forms.GroupBox groupBoxPriority;
+        private System.Windows.Forms.ComboBox comboBoxPriority;
+        private System.Windows.Forms.CheckBox checkBoxEnableTarget;
+        private System.Windows.Forms.TextBox textBoxTarget;
+        private System.Windows.Forms.Label labelTarget;
+        private System.Windows.Forms.GroupBox gboxMidiIn;
+        private System.Windows.Forms.Label lblMidiInCh;
+        private System.Windows.Forms.ComboBox comboMidiInCh;
+        private System.Windows.Forms.GroupBox gboxKeyConfig;
+        private System.Windows.Forms.Label labelImport;
+        private System.Windows.Forms.Button btnPresetB;
+        private System.Windows.Forms.Label labelLoadPreset;
+        private System.Windows.Forms.Button btnPresetA;
+        private System.Windows.Forms.Button btnImport;
     }
 }

@@ -72,15 +72,15 @@ namespace MidiKeyBard
                                     var elapse = swNoteDelay.ElapsedMilliseconds;
                                     if (elapse >= Setting.NoteDelay)
                                     {
-                                        Keyboard.SendKey(inputKey, inputNote.IsOn);
                                         swNoteDelay.Restart();
+                                        Keyboard.SendKey(Setting.TargetHandle, inputKey, inputNote.IsOn);
                                         inputKey = 0;
                                         inputNote = null;
                                     }
                                 }
                                 else
                                 {   // OFF のKeyは直ちに出力する
-                                    Keyboard.SendKey(inputKey, inputNote.IsOn);
+                                    Keyboard.SendKey(Setting.TargetHandle, inputKey, inputNote.IsOn);
                                     inputKey = 0;
                                 }
                             }
@@ -98,6 +98,14 @@ namespace MidiKeyBard
                     _isRunning = false;
                 }
             });
+        }
+
+        public void StartMainLoopIfStopped()
+        {
+            if (!_isRunning)
+            {
+                StartMainLoop();
+            }
         }
 
         internal void CloseMidiOut()

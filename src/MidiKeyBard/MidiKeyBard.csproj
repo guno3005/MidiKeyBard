@@ -81,6 +81,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="KeySetting.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Midi.cs" />
     <Compile Include="NoteEvent.cs" />
     <Compile Include="OptionForm.cs">
@@ -89,6 +90,7 @@
     <Compile Include="OptionForm.Designer.cs">
       <DependentUpon>OptionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProcessCatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

@@ -36,15 +36,7 @@ namespace MidiKeyBard
 
         private static void OutputLog(Exception ex, string title)
         {
-            string sLogFile = System.IO.Path.Combine(Application.StartupPath, "ErrLog.txt");
-            using (System.IO.StreamWriter oLogFile = new System.IO.StreamWriter(sLogFile, true, System.Text.Encoding.UTF8))
-            {
-                oLogFile.WriteLine(String.Format("[{0:yyyy/MM/dd HH:mm:ss}]", DateTime.Now));
-                oLogFile.WriteLine("<Message>" + ex.ToString());
-                oLogFile.WriteLine("<Source>" + ex.Source);
-                oLogFile.WriteLine();
-            }
-
+            Logger.GetInstance().WriteEx(ex);
             MessageBox.Show("プログラム中で補足されなかったエラーが発生しました。詳細はエラーログをごらん下さい", title);
         }
     }
