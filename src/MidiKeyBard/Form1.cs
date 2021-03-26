@@ -112,6 +112,7 @@ namespace MidiKeyBard
             if (string.IsNullOrWhiteSpace(item))
             {
                 comboBoxMidiIn.BackColor = Color.Empty;
+                Setting.SelectedMidiInIndex = comboBoxMidiIn.SelectedIndex;
                 return;
             }
 
@@ -204,6 +205,7 @@ namespace MidiKeyBard
             if (string.IsNullOrWhiteSpace(item))
             {
                 comboBoxMidiOut.BackColor = Color.Empty;
+                Setting.SelectedMidiOutIndex = comboBoxMidiOut.SelectedIndex;
                 return;
             }
 
