@@ -51,6 +51,7 @@
             this.buttonRefreshProcessList = new System.Windows.Forms.Button();
             this.comboBoxTargetWindow = new System.Windows.Forms.ComboBox();
             this.labelTarget = new System.Windows.Forms.Label();
+            this.buttonProcessPop = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.panelMidiIn.SuspendLayout();
             this.panelMidiOut.SuspendLayout();
@@ -74,7 +75,7 @@
             // labelStatus
             // 
             this.labelStatus.Font = new System.Drawing.Font("MS UI Gothic", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.labelStatus.Location = new System.Drawing.Point(10, 148);
+            this.labelStatus.Location = new System.Drawing.Point(10, 118);
             this.labelStatus.Margin = new System.Windows.Forms.Padding(10, 0, 3, 0);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(319, 30);
@@ -224,27 +225,28 @@
             this.flowLayoutPanelMain.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanelMain.Location = new System.Drawing.Point(0, 27);
             this.flowLayoutPanelMain.Name = "flowLayoutPanelMain";
-            this.flowLayoutPanelMain.Size = new System.Drawing.Size(332, 178);
+            this.flowLayoutPanelMain.Size = new System.Drawing.Size(332, 148);
             this.flowLayoutPanelMain.TabIndex = 7;
             // 
             // panelTarget
             // 
+            this.panelTarget.Controls.Add(this.buttonProcessPop);
             this.panelTarget.Controls.Add(this.buttonRefreshProcessList);
             this.panelTarget.Controls.Add(this.comboBoxTargetWindow);
             this.panelTarget.Controls.Add(this.labelTarget);
             this.panelTarget.Location = new System.Drawing.Point(3, 85);
             this.panelTarget.Name = "panelTarget";
-            this.panelTarget.Size = new System.Drawing.Size(326, 60);
+            this.panelTarget.Size = new System.Drawing.Size(326, 30);
             this.panelTarget.TabIndex = 6;
             this.panelTarget.Visible = false;
             // 
             // buttonRefreshProcessList
             // 
-            this.buttonRefreshProcessList.Location = new System.Drawing.Point(206, 29);
+            this.buttonRefreshProcessList.Location = new System.Drawing.Point(282, 3);
             this.buttonRefreshProcessList.Name = "buttonRefreshProcessList";
-            this.buttonRefreshProcessList.Size = new System.Drawing.Size(75, 23);
+            this.buttonRefreshProcessList.Size = new System.Drawing.Size(20, 20);
             this.buttonRefreshProcessList.TabIndex = 17;
-            this.buttonRefreshProcessList.Text = "Refresh";
+            this.buttonRefreshProcessList.Text = "↺";
             this.buttonRefreshProcessList.UseVisualStyleBackColor = true;
             this.buttonRefreshProcessList.Click += new System.EventHandler(this.buttonRefreshProcessList_Click);
             // 
@@ -272,13 +274,23 @@
             this.labelTarget.Text = "Target";
             this.labelTarget.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // buttonProcessPop
+            // 
+            this.buttonProcessPop.Location = new System.Drawing.Point(301, 3);
+            this.buttonProcessPop.Name = "buttonProcessPop";
+            this.buttonProcessPop.Size = new System.Drawing.Size(20, 20);
+            this.buttonProcessPop.TabIndex = 17;
+            this.buttonProcessPop.Text = "↑";
+            this.buttonProcessPop.UseVisualStyleBackColor = true;
+            this.buttonProcessPop.Click += new System.EventHandler(this.buttonProcessPopup_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(334, 217);
+            this.ClientSize = new System.Drawing.Size(334, 181);
             this.Controls.Add(this.flowLayoutPanelMain);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -327,6 +339,7 @@
         private System.Windows.Forms.Button buttonRefreshProcessList;
         private System.Windows.Forms.ComboBox comboBoxTargetWindow;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.Button buttonProcessPop;
     }
 }
 

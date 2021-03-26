@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +9,19 @@ namespace MidiKeyBard
 {
     class ProcessCatcher
     {
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsIconic(IntPtr hWnd);
+
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        const int SW_SHOWNORMAL = 1;
 
         public static List<System.Diagnostics.Process> GetWindowProcess()
         {
@@ -22,6 +36,25 @@ namespace MidiKeyBard
             }
 
             return processInfo;
+        }
+
+        internal static void PopupWindowProcess(IntPtr targetHandle)
+        {
+            if(targetHandle == IntPtr.Zero)
+            {
+                return;
+            }
+
+            if (IsIconic(targetHandle))
+            {
+                // ウィンドウが最小化されていた場合
+                ShowWindow(targetHandle, SW_SHOWNORMAL);
+            }
+            else
+            {
+                SetForegroundWindow(targetHandle);
+            }
+
         }
     }
 
@@ -50,7 +83,7 @@ namespace MidiKeyBard
         {
             if (_index > 0)
             {
-                return string.Format("{0} - {1}", _process.MainWindowTitle, _index + 1);
+                return string.Format("{0}({1})", _process.MainWindowTitle, _index + 1);
             }
             else
             {
@@ -65,7 +98,7 @@ namespace MidiKeyBard
                 return "None";
             }
 
-            return string.Format("<{0}>{1}[{2}]", _process.MainWindowHandle, GetWindowTitleWithIndex(),_process.ProcessName);
+            return string.Format("<{0}>{1}", _process.MainWindowHandle, GetWindowTitleWithIndex());
         }
     }
 }

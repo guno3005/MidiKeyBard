@@ -314,11 +314,11 @@ namespace MidiKeyBard
             var item = comboBoxTargetWindow.SelectedItem;
             if (item.GetType() == typeof(ProcessItem))
             {
-                var process = ((ProcessItem)item).Process;
-                if (process != null)
+                var pItem = ((ProcessItem)item);
+                if (pItem.Process != null)
                 {
-                    _SelectedHandle = process.MainWindowHandle;
-                    _SelectedProcessName = process.ProcessName;
+                    _SelectedHandle = pItem.Process.MainWindowHandle;
+                    _SelectedProcessName = pItem.GetWindowTitleWithIndex();
                     //return;
                 }
 
@@ -336,6 +336,15 @@ namespace MidiKeyBard
         {
             _processList = ProcessCatcher.GetWindowProcess();
             ResetComboTargetWindow(_processList, Setting.TargetName, Setting.TargetSelected);
+        }
+
+        private void buttonProcessPopup_Click(object sender, EventArgs e)
+        {
+            if(Setting.TargetHandle == IntPtr.Zero)
+            {
+                return;
+            }
+            ProcessCatcher.PopupWindowProcess(Setting.TargetHandle);
         }
 
         private void ResetComboTargetWindow(List<System.Diagnostics.Process> processList, string targetName, string selectedName)
@@ -361,8 +370,10 @@ namespace MidiKeyBard
                         return (item.Process.MainWindowTitle) == (p.MainWindowTitle);
                     }
                 }).Count();
-                comboBoxTargetWindow.Items.Add(new ProcessItem(p, countSameName));
-                if ((p.ProcessName == selectedName) && (selectedIndex == 0))
+
+                var pItem = new ProcessItem(p, countSameName);
+                comboBoxTargetWindow.Items.Add(pItem);
+                if ((pItem.GetWindowTitleWithIndex() == selectedName) && (selectedIndex == 0))
                 {
                     selectedIndex = comboBoxTargetWindow.Items.Count - 1;
                 }
