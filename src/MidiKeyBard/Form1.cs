@@ -154,14 +154,34 @@ namespace MidiKeyBard
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //CloseMidis();
-            if (_inOutControl != null)
+            CloseMidis();
+            Setting.SaveState();
+        }
+
+        private void CloseMidis()
+        {
+            if (_inOutControl == null)
             {
-                _inOutControl.CloseMidiIn();
-                _inOutControl.CloseMidiOut();
+                return;
             }
 
-            Setting.SaveState();
+            try
+            {
+                _inOutControl.CloseMidiIn();
+
+            }
+            catch (Exception ex)
+            {   // ログに書いてエラーメッセージは表示しない
+                Logger.GetInstance().WriteEx(ex);
+            }
+            try
+            {
+                _inOutControl.CloseMidiOut();
+            }
+            catch (Exception ex)
+            {   // ログに書いてエラーメッセージは表示しない
+                Logger.GetInstance().WriteEx(ex);
+            }
         }
 
         private void ShowOptionForm()
